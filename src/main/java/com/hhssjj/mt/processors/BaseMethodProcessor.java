@@ -15,7 +15,7 @@ public abstract class BaseMethodProcessor<T> {
     protected T methodAnnotation;
     protected JdbcTemplate jdbcTemplate;
 
-    public abstract Object process() throws Throwable;
+    public abstract Object process();
 
     public void setMethod(Method method) {
         this.method = method;

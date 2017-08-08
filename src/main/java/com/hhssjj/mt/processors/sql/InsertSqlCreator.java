@@ -20,7 +20,7 @@ public class InsertSqlCreator extends SqlCreator {
     private Logger logger = Logger.getLogger(InsertSqlCreator.class);
 
     @Override
-    public String createSql() throws Throwable {
+    public String createSql() {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
@@ -41,9 +41,14 @@ public class InsertSqlCreator extends SqlCreator {
             String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
             logger.info("get方法：" + getMethodName);
 
-            Object value = parameter.getClass()
-                    .getDeclaredMethod(getMethodName)
-                    .invoke(parameter);
+            Object value;
+            try {
+                value = parameter.getClass()
+                        .getDeclaredMethod(getMethodName)
+                        .invoke(parameter);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("不能找到" + getMethodName + "()方法，" + e.getMessage());
+            }
             // 如果获取到的值为null，则不拼接该字段到sql语句中
             if (value == null) {
                 continue;
@@ -82,8 +87,9 @@ public class InsertSqlCreator extends SqlCreator {
     }
 
     @Override
-    public String createPreparedSql() throws Throwable {
+    public String createPreparedSql() {
         valueMap = new HashMap<>();
+
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
@@ -104,19 +110,27 @@ public class InsertSqlCreator extends SqlCreator {
             String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
             logger.info("get方法：" + getMethodName);
 
-            Object value = parameter.getClass()
-                    .getDeclaredMethod(getMethodName)
-                    .invoke(parameter);
+            Object value;
+            try {
+                value = parameter.getClass()
+                        .getDeclaredMethod(getMethodName)
+                        .invoke(parameter);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("不能找到" + getMethodName + "()方法，" + e.getMessage());
+            }
+
             // 如果获取到的值为null，则不拼接该字段到sql语句中
             if (value == null) {
                 continue;
             }
+
             // 设置数据库列字段
             if (column == null) {
                 columnBuilder.append("`" + fieldName + "`,");
             } else {
                 columnBuilder.append("`" + column.name() + "`,");
             }
+
             // 预处理语句直接拼装问号
             valueBuilder.append("?,");
             valueMap.put(++i, value);
@@ -128,8 +142,10 @@ public class InsertSqlCreator extends SqlCreator {
         sqlBuilder.append(columnBuilder.toString().replace(",)", ")"));
         sqlBuilder.append(" VALUES ");
         sqlBuilder.append(valueBuilder.toString().replace(",)", ")"));
+
         String sql = sqlBuilder.toString();
         logger.info("生成的预处理插入语句：" + sql);
+
         return sql;
     }
 }

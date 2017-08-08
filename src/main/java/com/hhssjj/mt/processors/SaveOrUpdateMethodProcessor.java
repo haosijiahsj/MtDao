@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdate> {
 
     @Override
-    public Object process() throws Throwable {
+    public Object process() {
         Object id = null;
         try {
             id = parameters[0].getClass()

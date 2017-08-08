@@ -13,11 +13,10 @@ public class DeleteSqlCreator extends SqlCreator {
     protected Logger logger = Logger.getLogger(DeleteSqlCreator.class);
 
     @Override
-    public String createSql() throws Throwable {
+    public String createSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
 
-        Method method = parameter.getClass().getMethod("getId");
-        Object id = method.invoke(parameter);
+        Object id = getIdValue();
         String tableName = getTableName();
         deleteBuilder.append("`" + tableName + "` WHERE `id` = " + id);
 

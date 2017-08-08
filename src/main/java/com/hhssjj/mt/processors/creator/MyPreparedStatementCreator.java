@@ -22,11 +22,18 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
 
     @Override
     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-        String preparedSql = sqlCreator.createPreparedSql();
-        PreparedStatement preparedStatement = connection.prepareStatement(preparedSql, Statement.RETURN_GENERATED_KEYS);
+        String preparedSql = null;
+        try {
+            preparedSql = sqlCreator.createPreparedSql();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        PreparedStatement preparedStatement = connection.prepareStatement(preparedSql,
+                Statement.RETURN_GENERATED_KEYS);
         Map<Integer, Object> map = sqlCreator.getValueMap();
         for (Integer key : map.keySet()) {
             Object value = map.get(key);
+
             // 使用上帝类型，可能会有类型转换的错误（java.util.Date转换的时候，setObject中没有提供该类型的转换）
             if (value instanceof java.util.Date) {
                 Timestamp timestamp = new Timestamp(((Date) value).getTime());
@@ -35,6 +42,7 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
                 preparedStatement.setObject(key, value);
             }
         }
+
         return preparedStatement;
     }
 

@@ -21,9 +21,9 @@ public abstract class SqlCreator {
 
     protected Object parameter;
 
-    public abstract String createSql() throws Throwable;
+    public abstract String createSql();
 
-    public abstract String createPreparedSql() throws Throwable;
+    public abstract String createPreparedSql();
 
     public void setParameter(Object parameter) {
         this.parameter = parameter;
@@ -94,9 +94,8 @@ public abstract class SqlCreator {
                     .invoke(parameter);
             return id;
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("通过反射获取id值失败：" + e.getMessage());
+            throw new IllegalArgumentException("通过反射获取id值失败：" + e.getMessage());
         }
-        return null;
     }
 
     public Map<Integer, Object> getValueMap() {

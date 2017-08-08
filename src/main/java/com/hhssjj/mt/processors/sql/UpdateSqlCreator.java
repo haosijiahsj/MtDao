@@ -16,7 +16,7 @@ public class UpdateSqlCreator extends SqlCreator {
     private Logger logger = Logger.getLogger(UpdateSqlCreator.class);
 
     @Override
-    public String createSql() throws Throwable {
+    public String createSql() {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
         String tableName = getTableName();
         Field[] fields = getFields();
@@ -32,9 +32,14 @@ public class UpdateSqlCreator extends SqlCreator {
             String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
             logger.info("get方法：" + getMethodName);
 
-            Object value = parameter.getClass()
-                    .getMethod(getMethodName)
-                    .invoke(parameter);
+            Object value;
+            try {
+                value = parameter.getClass()
+                        .getMethod(getMethodName)
+                        .invoke(parameter);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("不能找到" + getMethodName + "()方法，" + e.getMessage());
+            }
             if (value == null) {
                 continue;
             }
@@ -60,7 +65,7 @@ public class UpdateSqlCreator extends SqlCreator {
         }
 
         Object id = getIdValue();
-        sqlBuilder.append("WHERE id = " + id);
+        sqlBuilder.append("WHERE `id` = " + id);
         String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
         logger.info("生成的更新sql为：" + sql);
         return sql;
