@@ -25,8 +25,6 @@ public class User {
 
     private String address;
 
-    private boolean isDeleted;
-
     @Column(name = "ts")
     private java.sql.Date updateTime;
 
@@ -78,11 +76,4 @@ public class User {
         this.sex = sex;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
 }

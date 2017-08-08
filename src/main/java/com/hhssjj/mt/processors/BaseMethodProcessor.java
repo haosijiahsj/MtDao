@@ -1,9 +1,12 @@
 package com.hhssjj.mt.processors;
 
+import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.
@@ -35,5 +38,18 @@ public abstract class BaseMethodProcessor<T> {
 
     public void setMethodAnnotation(T methodAnnotation) {
         this.methodAnnotation = methodAnnotation;
+    }
+
+    /**
+     * 将参数转换为Map，key为预处理预计中的位置；供用户自定义sql时使用
+     * @return
+     */
+    protected Map<Integer, Object> getParameterMap() {
+        Map<Integer, Object> map = new HashMap<>();
+        int i = 0;
+        for (Object value : parameters) {
+            map.put(++i, value);
+        }
+        return map;
     }
 }

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 /**
  * Created by 胡胜钧 on 8/6 0006.
@@ -20,12 +21,20 @@ public class DeleteSqlCreator extends SqlCreator {
         String tableName = getTableName();
         deleteBuilder.append("`" + tableName + "` WHERE `id` = " + id);
 
-        logger.info("生成的删除语句：" + deleteBuilder.toString());
+        logger.info("sql statement：" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
 
     @Override
     public String createPreparedSql() {
-        return null;
+        StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
+
+        String tableName = getTableName();
+        deleteBuilder.append("`" + tableName + "` WHERE `id` = ?");
+        // 必须重新初始化
+        valueMap = new HashMap<>();
+        valueMap.put(1, getIdValue());
+        logger.info("sql statement：" + deleteBuilder.toString());
+        return deleteBuilder.toString();
     }
 }
