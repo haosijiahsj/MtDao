@@ -18,7 +18,7 @@ public class ReflectUtils {
      * @return
      */
     public static boolean isList(Object object) {
-        return object.getClass().isAssignableFrom(List.class);
+        return List.class.isAssignableFrom(object.getClass());
     }
 
     /**
@@ -27,22 +27,21 @@ public class ReflectUtils {
      * @return
      */
     public static boolean isSet(Object object) {
-        return object.getClass().isAssignableFrom(Set.class);
+        return Set.class.isAssignableFrom(object.getClass());
     }
 
-    public static Class getCollectionTypeClass(Object object) {
-        if (!isList(object) && !isSet(object)) {
+    /**
+     * 返回泛型类型的class
+     * @param object
+     * @return
+     */
+    public static Class<?> getCollectionTypeClass(Object object) {
+        try {
+            Method method = object.getClass().getDeclaredMethod("get", int.class);
+            return method.getReturnType();
+        } catch (NoSuchMethodException e) {
             return null;
         }
-        try {
-            Method method = object.getClass().getMethod("get", object.getClass());
-            Type type = method.getGenericReturnType();
-            ParameterizedType pt = (ParameterizedType) type;
-            return (Class) pt.getActualTypeArguments()[0];
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

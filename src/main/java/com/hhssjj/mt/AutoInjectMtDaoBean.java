@@ -15,8 +15,6 @@ import java.lang.reflect.Field;
  */
 public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
 
-    private Logger logger = Logger.getLogger(AutoInjectMtDaoBean.class);
-
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     private DataSource dataSource;
@@ -43,7 +41,7 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
                 try {
                     field.set(bean, mtDao);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    throw new IllegalStateException("注入MtDao失败");
                 }
             }
         }

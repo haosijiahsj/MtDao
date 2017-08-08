@@ -87,6 +87,7 @@ public class Test {
         boolean flag = ReflectUtils.isList(list);
         boolean flag1 = ReflectUtils.isSet(list);
         Class clazz = ReflectUtils.getCollectionTypeClass(list);
+        System.out.println(clazz);
     }
 
 }
