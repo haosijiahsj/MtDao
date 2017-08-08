@@ -1,11 +1,15 @@
 package com.hhssjj.mt;
 
 import com.hhssjj.mt.annotations.MtDao;
+import com.hhssjj.mt.util.ReflectUtils;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 胡胜钧 on 8/6 0006.
@@ -29,9 +33,15 @@ public class Test {
     }
 
     @org.junit.Test
+    public void saveFromSqlTest() {
+        int n = dao.saveFromSqlTest("1", true, 3, "4", new Timestamp(new Date().getTime()));
+        System.out.println("n的值为：" + n);
+    }
+
+    @org.junit.Test
     public void test2() {
         User user = new User();
-        user.setId(2L);
+        user.setId(3L);
         int n = dao.deleteTest(user);
         System.out.println("n的值为：" + n);
     }
@@ -52,11 +62,19 @@ public class Test {
     public void test4() {
         User user = new User();
         user.setId(3L);
-        user.setName("胡胜钧111");
+        user.setName("胡胜钧");
         user.setAge(21);
         user.setSex(true);
-        user.setAddress("成都111");
+        user.setAddress("成都");
         dao.saveOrUpdateTest(user);
+    }
+
+    @org.junit.Test
+    public void testUtil() {
+        List<User> list = new ArrayList<>();
+        boolean flag = ReflectUtils.isList(list);
+        boolean flag1 = ReflectUtils.isSet(list);
+        Class clazz = ReflectUtils.getCollectionTypeClass(list);
     }
 
 }

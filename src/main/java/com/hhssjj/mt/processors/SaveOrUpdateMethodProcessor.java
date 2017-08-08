@@ -29,7 +29,7 @@ public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdat
         methodProcessor.setJdbcTemplate(jdbcTemplate);
         methodProcessor.setMethodAnnotation(methodAnnotation);
         methodProcessor.setParameters(parameters);
-        methodProcessor.setParameterAnnotation(parameterAnnotation);
+        methodProcessor.setParameterAnnotations(parameterAnnotations);
         methodProcessor.setMethod(method);
 
         return methodProcessor.process();

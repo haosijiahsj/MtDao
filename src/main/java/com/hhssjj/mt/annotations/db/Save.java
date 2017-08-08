@@ -9,5 +9,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Save {
+    String value() default "";
     boolean returnId() default false;
 }

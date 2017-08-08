@@ -26,13 +26,15 @@ public class MtDaoInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         Annotation[] methodAnnotations = method.getAnnotations();
 
-        // 遍历方法上的注解，实例化不同的处理类
+        // 遍历方法上的注解
         for (Annotation annotation : methodAnnotations) {
             BaseMethodProcessor methodProcessor = null;
             Class<? extends Annotation> annotationType = annotation.annotationType();
+
+            // 实例化不同的注解处理类
             if (Save.class.equals(annotationType)) {
                 methodProcessor = new SaveMethodProcessor();
             } else if (Delete.class.equals(annotationType)) {
@@ -43,17 +45,20 @@ public class MtDaoInvocationHandler implements InvocationHandler {
                 methodProcessor = new SaveOrUpdateMethodProcessor();
             }
 
-            // 给父类中设置值
-            if (methodProcessor != null) {
-                methodProcessor.setJdbcTemplate(jdbcTemplate);
-                methodProcessor.setMethodAnnotation(annotation);
-                methodProcessor.setParameters(args);
-                methodProcessor.setMethod(method);
-                methodProcessor.setParameterAnnotation(method.getParameterAnnotations());
-
-                return methodProcessor.process();
+            if (methodProcessor == null) {
+                throw new IllegalStateException("没有找到相关代理方法");
             }
+
+            // 给父抽象类中设置相关值
+            methodProcessor.setJdbcTemplate(jdbcTemplate);
+            methodProcessor.setMethodAnnotation(annotation);
+            methodProcessor.setParameters(args);
+            methodProcessor.setMethod(method);
+            methodProcessor.setParameterAnnotations(method.getParameterAnnotations());
+
+            return methodProcessor.process();
         }
-        throw new IllegalStateException("注入mt失败");
+
+        throw new IllegalStateException("MtDao代理接口中的方法没有发现相关注解");
     }
 }

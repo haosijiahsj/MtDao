@@ -1,6 +1,6 @@
 package com.hhssjj.mt.processors;
 
-import com.hhssjj.mt.annotations.db.query.Get;
+import com.hhssjj.mt.annotations.db.Get;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.

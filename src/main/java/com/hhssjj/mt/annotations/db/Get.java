@@ -1,4 +1,4 @@
-package com.hhssjj.mt.annotations.db.query;
+package com.hhssjj.mt.annotations.db;
 
 import java.lang.annotation.*;
 

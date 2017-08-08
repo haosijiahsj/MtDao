@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 /**
  * Created by 胡胜钧 on 8/6 0006.
@@ -15,23 +16,25 @@ public class DeleteSqlCreator extends SqlCreator {
     @Override
     public String createSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
-        try {
-            Method method = parameter.getClass().getMethod("getId");
-            Object id = method.invoke(parameter);
-            String tableName = getTableName();
-            deleteBuilder.append("`" + tableName + "` WHERE id = " + id);
-            if (id == null) {
-                new IllegalArgumentException("没有获取到id的值");
-            }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        logger.info("生成的删除语句：" + deleteBuilder.toString());
+
+        Object id = getIdValue();
+        String tableName = getTableName();
+        deleteBuilder.append("`" + tableName + "` WHERE `id` = " + id);
+
+        logger.info("sql statement：" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
 
     @Override
     public String createPreparedSql() {
-        return null;
+        StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
+
+        String tableName = getTableName();
+        deleteBuilder.append("`" + tableName + "` WHERE `id` = ?");
+        // 必须重新初始化
+        valueMap = new HashMap<>();
+        valueMap.put(1, getIdValue());
+        logger.info("sql statement：" + deleteBuilder.toString());
+        return deleteBuilder.toString();
     }
 }

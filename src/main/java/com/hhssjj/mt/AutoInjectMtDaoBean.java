@@ -19,15 +19,15 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
 
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
-    public DataSource getDataSource() {
-        return dataSource;
+    private DataSource dataSource;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
-    private DataSource dataSource;
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Field[] fields = bean.getClass().getDeclaredFields();
@@ -52,10 +52,6 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
 
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
-    }
-
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
     }
 
 }

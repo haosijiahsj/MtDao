@@ -13,27 +13,38 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.
  */
 public class SaveMethodProcessor extends BaseMethodProcessor<Save> {
     private Logger logger = Logger.getLogger(SaveMethodProcessor.class);
+
     @Override
     public Object process() {
         final SqlCreator sqlCreator = new InsertSqlCreator();
         sqlCreator.setParameter(parameters[0]);
-        // 定义一个T直接可以知道注解的类型
+
+        String userSql = methodAnnotation.value();
         boolean isReturnId = methodAnnotation.returnId();
-        logger.debug("Save注解定义的值：" + isReturnId);
+
+        // 支持用户自定义sql
+        MyPreparedStatementCreator myPreparedStatementCreator;
+        if ("".equals(userSql)) {
+            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator);
+        } else {
+            myPreparedStatementCreator = new MyPreparedStatementCreator(userSql, getParameterMap());
+        }
         if (isReturnId) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(new MyPreparedStatementCreator(sqlCreator), keyHolder);
+            myPreparedStatementCreator.setReturnId(true);
+            jdbcTemplate.update(myPreparedStatementCreator, keyHolder);
             return keyHolder.getKey().intValue();
         }
-        String sql = sqlCreator.createSql();
-        return jdbcTemplate.update(sql);
-    }
 
+        return jdbcTemplate.update(myPreparedStatementCreator);
+    }
 
 }

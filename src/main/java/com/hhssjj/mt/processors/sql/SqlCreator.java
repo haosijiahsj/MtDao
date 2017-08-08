@@ -19,6 +19,7 @@ public abstract class SqlCreator {
     // 存储预处理语句索引和值
     protected Map<Integer, Object> valueMap;
 
+    // 仅有一个参数的时候
     protected Object parameter;
 
     public abstract String createSql();
@@ -94,9 +95,8 @@ public abstract class SqlCreator {
                     .invoke(parameter);
             return id;
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("通过反射获取id值失败：" + e.getMessage());
+            throw new IllegalArgumentException("通过反射获取id值失败：" + e.getMessage());
         }
-        return null;
     }
 
     public Map<Integer, Object> getValueMap() {
