@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Query {
-    String sql();
+    String value() default "";
     boolean userCache() default false;
 }
