@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdate> {
 
     @Override
-    public Object process() {
+    public Object process() throws Throwable {
         Object id = null;
         try {
             id = parameters[0].getClass()
@@ -29,7 +29,7 @@ public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdat
         methodProcessor.setJdbcTemplate(jdbcTemplate);
         methodProcessor.setMethodAnnotation(methodAnnotation);
         methodProcessor.setParameters(parameters);
-        methodProcessor.setParameterAnnotation(parameterAnnotation);
+        methodProcessor.setParameterAnnotations(parameterAnnotations);
         methodProcessor.setMethod(method);
 
         return methodProcessor.process();

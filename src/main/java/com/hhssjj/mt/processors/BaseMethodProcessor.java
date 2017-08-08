@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
 public abstract class BaseMethodProcessor<T> {
     protected Method method;
     protected Object[] parameters;
-    protected Annotation[][] parameterAnnotation;
+    protected Annotation[][] parameterAnnotations;
     protected T methodAnnotation;
     protected JdbcTemplate jdbcTemplate;
 
-    public abstract Object process();
+    public abstract Object process() throws Throwable;
 
     public void setMethod(Method method) {
         this.method = method;
@@ -25,8 +25,8 @@ public abstract class BaseMethodProcessor<T> {
         this.parameters = parameters;
     }
 
-    public void setParameterAnnotation(Annotation[][] parameterAnnotation) {
-        this.parameterAnnotation = parameterAnnotation;
+    public void setParameterAnnotations(Annotation[][] parameterAnnotations) {
+        this.parameterAnnotations = parameterAnnotations;
     }
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {

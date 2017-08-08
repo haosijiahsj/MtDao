@@ -21,9 +21,9 @@ public abstract class SqlCreator {
 
     protected Object parameter;
 
-    public abstract String createSql();
+    public abstract String createSql() throws Throwable;
 
-    public abstract String createPreparedSql();
+    public abstract String createPreparedSql() throws Throwable;
 
     public void setParameter(Object parameter) {
         this.parameter = parameter;

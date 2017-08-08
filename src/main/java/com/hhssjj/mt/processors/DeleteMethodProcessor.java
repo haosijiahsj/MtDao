@@ -9,7 +9,7 @@ import com.hhssjj.mt.processors.sql.SqlCreator;
  */
 public class DeleteMethodProcessor extends BaseMethodProcessor<Delete> {
     @Override
-    public Object process() {
+    public Object process() throws Throwable {
         SqlCreator sqlCreator = new DeleteSqlCreator();
         sqlCreator.setParameter(parameters[0]);
         return jdbcTemplate.update(sqlCreator.createSql());

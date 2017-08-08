@@ -20,7 +20,7 @@ import java.sql.Statement;
 public class SaveMethodProcessor extends BaseMethodProcessor<Save> {
     private Logger logger = Logger.getLogger(SaveMethodProcessor.class);
     @Override
-    public Object process() {
+    public Object process() throws Throwable {
         final SqlCreator sqlCreator = new InsertSqlCreator();
         sqlCreator.setParameter(parameters[0]);
         // 定义一个T直接可以知道注解的类型

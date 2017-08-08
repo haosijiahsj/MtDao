@@ -13,19 +13,14 @@ public class DeleteSqlCreator extends SqlCreator {
     protected Logger logger = Logger.getLogger(DeleteSqlCreator.class);
 
     @Override
-    public String createSql() {
+    public String createSql() throws Throwable {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
-        try {
-            Method method = parameter.getClass().getMethod("getId");
-            Object id = method.invoke(parameter);
-            String tableName = getTableName();
-            deleteBuilder.append("`" + tableName + "` WHERE id = " + id);
-            if (id == null) {
-                new IllegalArgumentException("没有获取到id的值");
-            }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+
+        Method method = parameter.getClass().getMethod("getId");
+        Object id = method.invoke(parameter);
+        String tableName = getTableName();
+        deleteBuilder.append("`" + tableName + "` WHERE `id` = " + id);
+
         logger.info("生成的删除语句：" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }

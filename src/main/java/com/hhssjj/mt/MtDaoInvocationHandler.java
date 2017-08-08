@@ -41,19 +41,22 @@ public class MtDaoInvocationHandler implements InvocationHandler {
                 methodProcessor = new UpdateMethodProcessor();
             } else if (SaveOrUpdate.class.equals(annotationType)) {
                 methodProcessor = new SaveOrUpdateMethodProcessor();
+            } else {
+
             }
 
-            // 给父类中设置值
+            // 给父抽象类中设置相关值
             if (methodProcessor != null) {
                 methodProcessor.setJdbcTemplate(jdbcTemplate);
                 methodProcessor.setMethodAnnotation(annotation);
                 methodProcessor.setParameters(args);
                 methodProcessor.setMethod(method);
-                methodProcessor.setParameterAnnotation(method.getParameterAnnotations());
+                methodProcessor.setParameterAnnotations(method.getParameterAnnotations());
 
                 return methodProcessor.process();
             }
         }
-        throw new IllegalStateException("注入mt失败");
+
+        throw new IllegalStateException("没有找到相关代理方法");
     }
 }

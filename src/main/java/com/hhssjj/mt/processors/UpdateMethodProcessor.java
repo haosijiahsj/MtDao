@@ -9,7 +9,7 @@ import com.hhssjj.mt.processors.sql.UpdateSqlCreator;
  */
 public class UpdateMethodProcessor extends BaseMethodProcessor<Update> {
     @Override
-    public Object process() {
+    public Object process() throws Throwable {
         SqlCreator sqlCreator = new UpdateSqlCreator();
         sqlCreator.setParameter(parameters[0]);
         return jdbcTemplate.update(sqlCreator.createSql());
