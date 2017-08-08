@@ -13,9 +13,9 @@ import java.lang.reflect.Field;
 /**
  * Created by 胡胜钧 on 8/4 0004.
  */
-public class AutoInjectMtBean implements BeanPostProcessor, Serializable {
+public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
 
-    private Logger logger = Logger.getLogger(AutoInjectMtBean.class);
+    private Logger logger = Logger.getLogger(AutoInjectMtDaoBean.class);
 
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
@@ -38,7 +38,7 @@ public class AutoInjectMtBean implements BeanPostProcessor, Serializable {
                 if (mtDaoAnnotation == null) {
                     continue;
                 }
-                Object mtDao = MtProxyFactory.create(field.getType(), jdbcTemplate);
+                Object mtDao = MtDaoProxyFactory.create(field.getType(), jdbcTemplate);
                 field.setAccessible(true);
                 try {
                     field.set(bean, mtDao);

@@ -15,13 +15,13 @@ import java.lang.reflect.Method;
 /**
  * Created by 胡胜钧 on 8/4 0004.
  */
-public class MtInvocationHandler implements InvocationHandler {
+public class MtDaoInvocationHandler implements InvocationHandler {
 
-    private Logger logger = Logger.getLogger(MtInvocationHandler.class);
+    private Logger logger = Logger.getLogger(MtDaoInvocationHandler.class);
 
     private JdbcTemplate jdbcTemplate;
 
-    public MtInvocationHandler(JdbcTemplate jdbcTemplate) {
+    public MtDaoInvocationHandler(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -7,9 +7,9 @@ import java.lang.reflect.Proxy;
 /**
  * Created by 胡胜钧 on 8/5 0005.
  */
-public class MtProxyFactory {
+public class MtDaoProxyFactory {
     public static <T> T create(Class<T> clazz, JdbcTemplate jdbcTemplate) {
-        MtInvocationHandler invocationHandler = new MtInvocationHandler(jdbcTemplate);
+        MtDaoInvocationHandler invocationHandler = new MtDaoInvocationHandler(jdbcTemplate);
 
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class[] { clazz },
