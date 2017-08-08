@@ -19,6 +19,7 @@ public abstract class SqlCreator {
     // 存储预处理语句索引和值
     protected Map<Integer, Object> valueMap;
 
+    // 仅有一个参数的时候
     protected Object parameter;
 
     public abstract String createSql();

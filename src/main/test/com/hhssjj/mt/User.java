@@ -12,13 +12,21 @@ import java.util.Date;
 public class User {
     @Id
     private Long id;
+
     @Column(name = "name")
     private String name;
+
     private Boolean sex;
+
     @Column(name = "age")
     private Integer age;
+
     @Column(name = "address")
+
     private String address;
+
+    private boolean isDeleted;
+
     @Column(name = "ts")
     private java.sql.Date updateTime;
 
@@ -68,5 +76,13 @@ public class User {
 
     public void setSex(Boolean sex) {
         this.sex = sex;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

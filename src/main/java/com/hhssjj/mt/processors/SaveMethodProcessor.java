@@ -19,21 +19,26 @@ import java.sql.Statement;
  */
 public class SaveMethodProcessor extends BaseMethodProcessor<Save> {
     private Logger logger = Logger.getLogger(SaveMethodProcessor.class);
+
     @Override
     public Object process() {
         final SqlCreator sqlCreator = new InsertSqlCreator();
         sqlCreator.setParameter(parameters[0]);
-        // 定义一个T直接可以知道注解的类型
+
+        String userSql = methodAnnotation.value();
         boolean isReturnId = methodAnnotation.returnId();
+
         logger.debug("Save注解定义的值：" + isReturnId);
         if (isReturnId) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(new MyPreparedStatementCreator(sqlCreator), keyHolder);
             return keyHolder.getKey().intValue();
         }
+
+        // 拼接的sql语句
         String sql = sqlCreator.createSql();
+
         return jdbcTemplate.update(sql);
     }
-
 
 }

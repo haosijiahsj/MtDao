@@ -15,21 +15,37 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
 
     private Logger logger = Logger.getLogger(MyPreparedStatementCreator.class);
     private SqlCreator sqlCreator;
+    private String preparedSql;
+    private Map<Integer, Object> valueMap;
+    // 仅仅插入语句的时候使用
+    private boolean isReturnId = false;
 
     public MyPreparedStatementCreator(SqlCreator sqlCreator) {
         this.sqlCreator = sqlCreator;
     }
 
+    public MyPreparedStatementCreator(String preparedSql, Map<Integer, Object> valueMap) {
+        this.preparedSql = preparedSql;
+        this.valueMap = valueMap;
+    }
+
+    public void setReturnId(boolean returnId) {
+        isReturnId = returnId;
+    }
+
     @Override
     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-        String preparedSql = null;
-        try {
-            preparedSql = sqlCreator.createPreparedSql();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        String preparedSql = sqlCreator.createPreparedSql();
+
+        PreparedStatement preparedStatement;
+
+        // 添加对插入成功返回主键的支持
+        if (!isReturnId) {
+            preparedStatement = connection.prepareStatement(preparedSql);
+        } else {
+            preparedStatement = connection.prepareStatement(preparedSql, Statement.RETURN_GENERATED_KEYS);
         }
-        PreparedStatement preparedStatement = connection.prepareStatement(preparedSql,
-                Statement.RETURN_GENERATED_KEYS);
+
         Map<Integer, Object> map = sqlCreator.getValueMap();
         for (Integer key : map.keySet()) {
             Object value = map.get(key);
