@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by 胡胜钧 on 8/6 0006.
@@ -73,6 +74,47 @@ public class UpdateSqlCreator extends SqlCreator {
 
     @Override
     public String createPreparedSql() {
-        return null;
+        StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
+        String tableName = getTableName();
+        Field[] fields = getFields();
+        sqlBuilder.append("`" + tableName +"` SET ");
+        int i = 0;
+        valueMap = new HashMap<>();
+        for (Field field : fields) {
+            Column column = field.getAnnotation(Column.class);
+            String fieldName = field.getName();
+            if ("id".equals(fieldName)) {
+                continue;
+            }
+
+            // 通过字段名称找到get方法
+            String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            logger.info("get方法：" + getMethodName);
+
+            Object value;
+            try {
+                value = parameter.getClass()
+                        .getMethod(getMethodName)
+                        .invoke(parameter);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("不能找到" + getMethodName + "()方法，" + e.getMessage());
+            }
+            if (value == null) {
+                continue;
+            }
+            if (column == null) {
+                sqlBuilder.append("`" + fieldName + "` = ?,");
+            } else {
+                sqlBuilder.append("`" + column.name() + "` = ?,");
+            }
+            valueMap.put(++i, value);
+
+        }
+
+        sqlBuilder.append("WHERE `id` = ?");
+        valueMap.put(++i, getIdValue());
+        String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
+        logger.info("sql statement:" + sql);
+        return sql;
     }
 }

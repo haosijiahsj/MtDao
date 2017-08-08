@@ -47,15 +47,27 @@ public class Test {
     }
 
     @org.junit.Test
+    public void deleteFromSqlTest() {
+        int n = dao.deleteFromSqlTest(20);
+        System.out.println("n的值为：" + n);
+    }
+
+    @org.junit.Test
     public void test3() {
         User user = new User();
-        user.setId(3L);
+        user.setId(20L);
         user.setName("胡胜钧");
         user.setAge(21);
         user.setSex(true);
         user.setAddress("成都市");
         int n = dao.updateTest(user);
         System.out.println("n的值为：" + n);
+    }
+
+    @org.junit.Test
+    public void updateFromSql() {
+        int n = dao.updateFromSql("hsj", false, 20, "cd", 21);
+        System.out.println(n);
     }
 
     @org.junit.Test

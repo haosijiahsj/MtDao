@@ -57,7 +57,7 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
             }
             sb.append(value + ",");
         }
-        logger.info("sql parameter：" + sb.append("]").toString().replace(",]", "]"));
+        logger.info("sql parameter:" + sb.append("]").toString().replace(",]", "]"));
 
         return preparedStatement;
     }

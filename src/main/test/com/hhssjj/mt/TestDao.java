@@ -20,8 +20,14 @@ public interface TestDao {
     @Delete
     int deleteTest(User user);
 
+    @Delete("delete from mt_user where id = ?")
+    int deleteFromSqlTest(int id);
+
     @Update
     int updateTest(User user);
+
+    @Update("update mt_user set name = ?, sex = ?, age = ?, address= ? where id = ?")
+    int updateFromSql(String name, boolean sex, int age, String address, int id);
 
     @SaveOrUpdate
     void saveOrUpdateTest(User user);

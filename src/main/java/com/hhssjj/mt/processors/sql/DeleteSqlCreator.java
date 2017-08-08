@@ -34,7 +34,7 @@ public class DeleteSqlCreator extends SqlCreator {
         // 必须重新初始化
         valueMap = new HashMap<>();
         valueMap.put(1, getIdValue());
-        logger.info("sql statement：" + deleteBuilder.toString());
+        logger.info("sql statement:" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
 }

@@ -144,7 +144,7 @@ public class InsertSqlCreator extends SqlCreator {
         sqlBuilder.append(valueBuilder.toString().replace(",)", ")"));
 
         String sql = sqlBuilder.toString();
-        logger.info("生成的预处理插入语句：" + sql);
+        logger.info("sql statement:" + sql);
 
         return sql;
     }
