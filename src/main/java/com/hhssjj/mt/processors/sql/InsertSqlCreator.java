@@ -98,42 +98,14 @@ public class InsertSqlCreator extends SqlCreator {
 
         // 拼装表名
         sqlBuilder.append("`" + tableName + "`");
+
         int i = 0;
-        for (Field field : fields) {
-            Column column = field.getAnnotation(Column.class);
-            String fieldName = field.getName();
-            if ("id".equals(fieldName)) {
-                continue;
-            }
-
-            // 通过字段名称找到get方法
-            String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-            logger.info("get方法：" + getMethodName);
-
-            Object value;
-            try {
-                value = parameter.getClass()
-                        .getDeclaredMethod(getMethodName)
-                        .invoke(parameter);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new IllegalArgumentException("不能找到" + getMethodName + "()方法，" + e.getMessage());
-            }
-
-            // 如果获取到的值为null，则不拼接该字段到sql语句中
-            if (value == null) {
-                continue;
-            }
-
-            // 设置数据库列字段
-            if (column == null) {
-                columnBuilder.append("`" + fieldName + "`,");
-            } else {
-                columnBuilder.append("`" + column.name() + "`,");
-            }
-
-            // 预处理语句直接拼装问号
+        valueMap = new HashMap<>();
+        Map<String, Object> map = getColumnAndValueMapFromObject();
+        for (String key : map.keySet()) {
+            columnBuilder.append("`" + key + "`,");
             valueBuilder.append("?,");
-            valueMap.put(++i, value);
+            valueMap.put(++i, map.get(key));
         }
 
         columnBuilder.append(")");

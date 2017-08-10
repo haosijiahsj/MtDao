@@ -2,7 +2,7 @@ package com.hhssjj.mt.processors.sql;
 
 import org.apache.log4j.Logger;
 
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -76,7 +76,7 @@ public abstract class SqlCreator {
     protected Method[] getGetMethods() {
         List<Method> methodList = new ArrayList<>();
         for (Method method : getMethods()) {
-            if (method.getName().startsWith("get")) {
+            if (method.getName().startsWith("get") || method.getName().startsWith("is")) {
                 methodList.add(method);
             }
         }
@@ -89,11 +89,15 @@ public abstract class SqlCreator {
     }
 
     protected Object getIdValue() {
+        String getIdMethod = "getId";
+        for (Field field : getFields()) {
+            String fieldName = field.getName();
+            if (field.getAnnotation(Id.class) != null) {
+                getIdMethod = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            }
+        }
         try {
-            Object id = parameter.getClass()
-                    .getMethod("getId")
-                    .invoke(parameter);
-            return id;
+            return parameter.getClass().getMethod(getIdMethod).invoke(parameter);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalArgumentException("通过反射获取id值失败：" + e.getMessage());
         }
@@ -101,6 +105,71 @@ public abstract class SqlCreator {
 
     public Map<Integer, Object> getValueMap() {
         return valueMap;
+    }
+
+    /**
+     * 获取字段与对应值的映射
+     * @return
+     */
+    protected Map<String, Object> getColumnAndValueMapFromObject() {
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        Field[] fields = parameter.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            Id idAnnotation = field.getAnnotation(Id.class);
+            Column columnAnnotation = field.getAnnotation(Column.class);
+            // 默认数据库列名称为字段名称
+            String columnName = field.getName();
+            // 通过字段名称找到get方法
+            String getMethodName = "get" + columnName.substring(0, 1).toUpperCase() + columnName.substring(1);
+            // 对boolean类型特殊处理
+            String filedTypeName = field.getType().getName();
+            if ("boolean".equals(filedTypeName) || "java.lang.Boolean".equals(filedTypeName)) {
+                if (columnName.startsWith("is")) {
+                    getMethodName = columnName;
+                } else if (columnName.startsWith("has") || columnName.startsWith("have")) {
+                    getMethodName = "is" + columnName.substring(0, 1).toUpperCase() + columnName.substring(1);
+                }
+            }
+            logger.info("get方法：" + getMethodName);
+            Object value;
+            try {
+                value = parameter.getClass().getDeclaredMethod(getMethodName).invoke(parameter);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("can't find '" + getMethodName + "()' method," + e.getMessage());
+            }
+            if (idAnnotation != null) {
+                GeneratedValue generatedValueAnnotation = field.getAnnotation(GeneratedValue.class);
+                if (generatedValueAnnotation == null) continue;
+                else {
+                    GenerationType generationType = generatedValueAnnotation.strategy();
+                    if (GenerationType.IDENTITY.equals(generationType)) continue;
+                    else if (GenerationType.AUTO.equals(generationType)) {
+                        // 自动判断数据库类型，然后使用不同的主键生成策略
+                        String driverName = System.getProperty("jdbc.driver");
+                        logger.info("数据库驱动：" +driverName);
+                        throw new IllegalStateException("sorry! at present MtDao can't support this id generate strategy");
+                    } else if (GenerationType.SEQUENCE.equals(generationType)) {
+                        // Oracle数据库的主键生成策略
+                        throw new IllegalStateException("sorry! at present MtDao can't support this id generate strategy");
+                    } else {
+                        // 这个需要维护一张表
+                        throw new IllegalStateException("sorry! at present MtDao can't support this id generate strategy");
+                    }
+                }
+            }
+            // 扫描到@Column注解存在时，则设定列名为用户定义的列名
+            if (columnAnnotation != null) {
+                boolean nullAble = columnAnnotation.nullable();
+                if (value == null) {
+                    if (!nullAble) throw new IllegalArgumentException("'" + columnName + "' can't accept null value");
+                }
+                columnName = columnAnnotation.name();
+            }
+
+            map.put(columnName, value);
+        }
+        return map;
     }
 
 }

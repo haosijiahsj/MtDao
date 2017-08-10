@@ -26,7 +26,7 @@ public class Test {
         user.setName("胡胜钧123");
         user.setAge(22);
         user.setSex(true);
-        user.setAddress("成都市123");
+        //user.setAddress("成都市123");
         user.setUpdateTime(new java.sql.Date(new Date().getTime()));
         int n = dao.saveTest(user);
         System.out.println("n的值为：" + n);
@@ -88,6 +88,16 @@ public class Test {
         boolean flag1 = ReflectUtils.isSet(list);
         Class clazz = ReflectUtils.getCollectionTypeClass(list);
         System.out.println(clazz);
+    }
+
+    @org.junit.Test
+    public void testUtil1() {
+        User user = new User();
+        user.setId(12L);
+        user.setUpdateTime(new java.sql.Date(new Date().getTime()));
+
+        ReflectUtils.getColumnAndValueMapFromObject(user);
+
     }
 
 }

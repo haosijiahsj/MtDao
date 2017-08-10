@@ -1,8 +1,6 @@
 package com.hhssjj.mt;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -11,6 +9,7 @@ import java.util.Date;
 @Table(name = "mt_user")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "name")
@@ -24,6 +23,7 @@ public class User {
     @Column(name = "address")
 
     private String address;
+
 
     @Column(name = "ts")
     private java.sql.Date updateTime;
