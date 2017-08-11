@@ -1,7 +1,6 @@
 package com.hhssjj.mt.sql;
 
-import com.hhssjj.mt.mapping.EntityMapping;
-import com.hhssjj.mt.support.SqlType;
+import com.hhssjj.mt.reflect.ReflectUtils;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
@@ -18,17 +17,26 @@ import java.util.Map;
 public class InsertSqlCreator extends SqlCreator {
 
     private Logger logger = Logger.getLogger(InsertSqlCreator.class);
+    private String sql;
+    private String tableName;
+
+    public InsertSqlCreator() {}
+
+    public InsertSqlCreator(String sql, String tableName) {
+        this.sql = sql;
+        this.tableName = tableName;
+    }
 
     @Override
     public String createSql() {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
-        Field[] fields = getFields();
-        String tableName = getTableName();
+        Field[] fields = ReflectUtils.getDeclaredFields(parameter);
+        String tableName = entityMapping.getTableName();
 
         // 拼装表名
-        sqlBuilder.append("`" + tableName + "`");
+        sqlBuilder.append("`").append(tableName).append("`");
 
         for (Field field : fields) {
             Column column = field.getAnnotation(Column.class);
@@ -87,22 +95,33 @@ public class InsertSqlCreator extends SqlCreator {
     }
 
     @Override
+    public String createUserSql() {
+        valueMap = new HashMap<>();
+        int i = 0;
+        for (Object value : parameters) {
+            valueMap.put(++i, value);
+        }
+        logger.info("sql statement: " + this.sql);
+        return sql;
+    }
+
+    @Override
     public String createPreparedSql() {
         valueMap = new HashMap<>();
 
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
-        String tableName = getTableName();
+        String tableName = entityMapping.getTableName();
 
         // 拼装表名
-        sqlBuilder.append("`" + tableName + "`");
+        sqlBuilder.append("`").append(tableName).append("`");
 
         int i = 0;
         valueMap = new HashMap<>();
         Map<String, Object> map = entityMapping.getColumnAndValueMapFromObject();
         for (String key : map.keySet()) {
-            columnBuilder.append("`" + key + "`,");
+            columnBuilder.append("`").append(key).append("`,");
             valueBuilder.append("?,");
             valueMap.put(++i, map.get(key));
         }
@@ -122,21 +141,22 @@ public class InsertSqlCreator extends SqlCreator {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String createPreparedSqlFromMap(String tableName) {
+    public String createPreparedSqlFromMap() {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
 
         // 拼装表名
-        sqlBuilder.append("`" + tableName + "`");
+        sqlBuilder.append("`").append(this.tableName).append("`");
 
         String typeName = parameter.getClass().getTypeName();
         if (!typeName.contains("Map")) throw new IllegalArgumentException("In this mode, you must set a 'Map' parameter");
 
         Map<String, Object> map = (Map<String, Object>) parameter;
         int i = 0;
+        valueMap = new HashMap<>();
         for (String key : map.keySet()) {
-            columnBuilder.append("`" + key + "`,");
+            columnBuilder.append("`").append(key).append("`,");
             valueBuilder.append("?,");
             valueMap.put(++i, map.get(key));
         }
@@ -151,6 +171,6 @@ public class InsertSqlCreator extends SqlCreator {
         String sql = sqlBuilder.toString();
         logger.info("sql statement:" + sql);
 
-        return null;
+        return sql;
     }
 }

@@ -26,7 +26,7 @@ public class EntityMapping {
      * 生成类名与表名称映射
      * @return
      */
-    public Map<String, String> generateEntityAndTableMap() {
+    public Map<String, String> getEntityAndTableMap() {
         Map<String, String> entityAndTableMap = new HashMap<>();
 
         String entityName = object.getClass().getName();
@@ -45,11 +45,43 @@ public class EntityMapping {
         return entityAndTableMap;
     }
 
+    public String getTableName() {
+        Map<String, String> entityAndTableMap = new HashMap<>();
+
+        String entityName = object.getClass().getName();
+        String tableName = entityName;
+        Entity entity = object.getClass().getAnnotation(Entity.class);
+
+        if (entity == null)
+            throw new IllegalStateException(object + " is not a database entity, maybe you should add annotation '@Entity'");
+        else {
+            Table table = object.getClass().getAnnotation(Table.class);
+            if (table != null && !"".equals(table.name())) tableName = table.name();
+        }
+        return tableName;
+    }
+
+    public String getIdColumnName() {
+        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        for (Field field : fields) {
+            Id id = field.getAnnotation(Id.class);
+            Column column = field.getAnnotation(Column.class);
+            if (id != null) {
+                if (column != null && !"".equals(column.name())) {
+                    return column.name();
+                }
+                return field.getName();
+            }
+        }
+        // 必须定义@Id注解，否则报错
+        throw new IllegalArgumentException(object + " must define '@Id' annotation, but you not!");
+    }
+
     /**
      * 生成字段名与数据库列名的映射
      * @return
      */
-    public Map<String, String> generateFieldAndColumnMap() {
+    public Map<String, String> getFieldAndColumnMap() {
         Map<String, String> fieldAndColumnMap = new HashMap<>();
 
         Field[] fields = object.getClass().getDeclaredFields();
@@ -150,6 +182,23 @@ public class EntityMapping {
         map.put(idColumnName, value);
 
         return map;
+    }
+
+    public Object getIdValue() {
+        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        for (Field field : fields) {
+            Id id = field.getAnnotation(Id.class);
+            Column column = field.getAnnotation(Column.class);
+            if (id != null) {
+                String idColumnName = field.getName();
+                if (column != null && !"".equals(column.name())) {
+                    idColumnName = column.name();
+                }
+                String getIdMethod = "get" + idColumnName.substring(0, 1).toUpperCase() + idColumnName.substring(1);
+                return ReflectUtils.invoke(object, getIdMethod);
+            }
+        }
+        throw new IllegalArgumentException(object + " must define '@Id' annotation, but you not!");
     }
 
 }

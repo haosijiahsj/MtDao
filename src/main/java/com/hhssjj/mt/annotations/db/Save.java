@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Save {
     String value() default "";
-    String tabName() default "";
+    String tableName() default "";
     boolean returnId() default false;
 }

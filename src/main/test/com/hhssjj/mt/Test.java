@@ -7,9 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by 胡胜钧 on 8/6 0006.
@@ -30,6 +28,16 @@ public class Test {
         user.setUpdateTime(new java.sql.Date(new Date().getTime()));
         int n = dao.saveTest(user);
         System.out.println("n的值为：" + n);
+    }
+
+    @org.junit.Test
+    public void saveFromMap() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("name", "hhssjj");
+        map.put("sex", true);
+        map.put("age", 12);
+        dao.saveFromMap(map);
     }
 
     @org.junit.Test

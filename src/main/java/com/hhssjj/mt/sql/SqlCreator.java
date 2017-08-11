@@ -27,11 +27,19 @@ public abstract class SqlCreator {
     // 仅有一个参数的时候
     protected Object parameter;
 
+    protected Object[] parameters;
+
     /**
      * 创建拼接的sql
      * @return
      */
     public abstract String createSql();
+
+    /**
+     * 直接返回用户传入的sql
+     * @return
+     */
+    public abstract String createUserSql();
 
     /**
      * 创建预处理sql
@@ -43,10 +51,14 @@ public abstract class SqlCreator {
      * 从用户定义的map中来创建预处理sql
      * @return
      */
-    public abstract String createPreparedSqlFromMap(String tableName);
+    public abstract String createPreparedSqlFromMap();
 
     public void setParameter(Object parameter) {
         this.parameter = parameter;
+    }
+
+    public void setParameters(Object[] parameters) {
+        this.parameters = parameters;
     }
 
     public void setEntityMapping(EntityMapping entityMapping) {
@@ -61,53 +73,6 @@ public abstract class SqlCreator {
         return parameter.getClass().getAnnotations();
     }
 
-    /**
-     * 获取实体类中的@Table注解
-     * @return
-     */
-    protected Table getTableAnnotation() {
-        return parameter.getClass().getAnnotation(Table.class);
-    }
-
-    /**
-     * 获取@Table注解中的表名，若该注解不存在，则使用类名作为表名
-     * @return
-     */
-    protected String getTableName() {
-        Table tableAnnotation = getTableAnnotation();
-        String tableName;
-        if (tableAnnotation == null) {
-            tableName = parameter.getClass().getName();
-        } else {
-            tableName = tableAnnotation.name();
-        }
-        return tableName;
-    }
-
-    /**
-     * 获取实体类中的所有方法
-     * @return
-     */
-    protected Method[] getMethods() {
-        return parameter.getClass().getMethods();
-    }
-
-    protected Field[] getFields() {
-        return parameter.getClass().getDeclaredFields();
-    }
-
-    protected Object getIdValue() {
-        String getIdMethod = "getId";
-        for (Field field : getFields()) {
-            String fieldName = field.getName();
-            if (field.getAnnotation(Id.class) != null) {
-                getIdMethod = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-            }
-        }
-
-        return ReflectUtils.invoke(parameter, getIdMethod);
-
-    }
 
     public Map<Integer, Object> getValueMap() {
         return valueMap;

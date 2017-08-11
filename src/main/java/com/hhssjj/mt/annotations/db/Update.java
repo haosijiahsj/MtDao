@@ -10,4 +10,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Update {
     String value() default "";
+    String tableName() default "";
 }

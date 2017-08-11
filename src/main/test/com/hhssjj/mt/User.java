@@ -6,9 +6,11 @@ import java.util.Date;
 /**
  * Created by 胡胜钧 on 8/6 0006.
  */
+@Entity
 @Table(name = "mt_user")
 public class User {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

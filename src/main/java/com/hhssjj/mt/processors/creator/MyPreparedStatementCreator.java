@@ -1,6 +1,7 @@
 package com.hhssjj.mt.processors.creator;
 
 import com.hhssjj.mt.sql.SqlCreator;
+import com.hhssjj.mt.support.SqlCreateType;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
@@ -19,8 +20,14 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
     // 仅仅插入语句的时候使用
     private boolean isReturnId = false;
 
-    public MyPreparedStatementCreator(SqlCreator sqlCreator) {
-        this.preparedSql = sqlCreator.createPreparedSql();
+    public MyPreparedStatementCreator(SqlCreator sqlCreator, SqlCreateType sqlCreateType) {
+        if (SqlCreateType.AUTO_CREATE.equals(sqlCreateType)) {
+            this.preparedSql = sqlCreator.createPreparedSql();
+        } else if (SqlCreateType.FROM_MAP.equals(sqlCreateType)) {
+            this.preparedSql = sqlCreator.createPreparedSqlFromMap();
+        } else if (SqlCreateType.USER_DEFINE.equals(sqlCreateType)) {
+            this.preparedSql = sqlCreator.createUserSql();
+        }
         this.valueMap = sqlCreator.getValueMap();
     }
 

@@ -15,23 +15,39 @@ public class DeleteSqlCreator extends SqlCreator {
     public String createSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
 
-        Object id = getIdValue();
-        String tableName = getTableName();
-        deleteBuilder.append("`" + tableName + "` WHERE `id` = " + id);
+        Object id = entityMapping.getIdValue();
+        String tableName = entityMapping.getTableName();
+        deleteBuilder.append("`")
+                .append(tableName)
+                .append("` WHERE `")
+                .append(entityMapping.getIdColumnName())
+                .append("` = ")
+                .append(id);
 
         logger.info("sql statement：" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
 
     @Override
+    public String createUserSql(String sql) {
+        logger.info("sql statement：" + sql);
+        return sql;
+    }
+
+    @Override
     public String createPreparedSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
 
-        String tableName = getTableName();
-        deleteBuilder.append("`" + tableName + "` WHERE `id` = ?");
+        String tableName = entityMapping.getTableName();
+        deleteBuilder.append("`")
+                .append(tableName)
+                .append("` WHERE `")
+                .append(entityMapping.getIdColumnName())
+                .append("` = ?");
+
         // 必须重新初始化
         valueMap = new HashMap<>();
-        valueMap.put(1, getIdValue());
+        valueMap.put(1, entityMapping.getIdValue());
         logger.info("sql statement:" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
