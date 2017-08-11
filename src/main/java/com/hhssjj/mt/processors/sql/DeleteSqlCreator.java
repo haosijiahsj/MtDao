@@ -37,4 +37,9 @@ public class DeleteSqlCreator extends SqlCreator {
         logger.info("sql statement:" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }
+
+    @Override
+    public String createPreparedSqlFromMap() {
+        return null;
+    }
 }

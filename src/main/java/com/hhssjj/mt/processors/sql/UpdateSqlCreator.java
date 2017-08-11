@@ -117,4 +117,9 @@ public class UpdateSqlCreator extends SqlCreator {
         logger.info("sql statement:" + sql);
         return sql;
     }
+
+    @Override
+    public String createPreparedSqlFromMap() {
+        return null;
+    }
 }

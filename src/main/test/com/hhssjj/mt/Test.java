@@ -1,7 +1,7 @@
 package com.hhssjj.mt;
 
 import com.hhssjj.mt.annotations.MtDao;
-import com.hhssjj.mt.util.ReflectUtils;
+import com.hhssjj.mt.reflect.ReflectUtils;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

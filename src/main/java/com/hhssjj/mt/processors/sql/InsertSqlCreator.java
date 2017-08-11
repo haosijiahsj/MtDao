@@ -120,4 +120,9 @@ public class InsertSqlCreator extends SqlCreator {
 
         return sql;
     }
+
+    @Override
+    public String createPreparedSqlFromMap() {
+        return null;
+    }
 }
