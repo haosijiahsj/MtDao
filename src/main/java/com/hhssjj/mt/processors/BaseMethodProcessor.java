@@ -41,7 +41,7 @@ public abstract class BaseMethodProcessor<T> {
     }
 
     /**
-     * 将参数转换为Map，key为预处理预计中的位置；供用户自定义sql时使用
+     * 将参数转换为Map，key为预处理语句中的位置
      * @return
      */
     protected Map<Integer, Object> getParameterMap() {

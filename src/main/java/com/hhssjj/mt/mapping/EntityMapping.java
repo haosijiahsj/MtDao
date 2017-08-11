@@ -17,11 +17,8 @@ public class EntityMapping {
     private Object object;
     private SqlType sqlType;
 
-    private EntityMapping(Object object) {
+    public EntityMapping(Object object, SqlType sqlType) {
         this.object = object;
-    }
-
-    public void setSqlType(SqlType sqlType) {
         this.sqlType = sqlType;
     }
 
@@ -102,7 +99,7 @@ public class EntityMapping {
 
             Object value = ReflectUtils.invoke(object, getMethodName);
 
-            // 当sql语句为插入类型的时候去找主键
+            // 当sql语句为插入类型的时候去生成主键
             if (SqlType.INSERT.equals(sqlType)) {
                 // 当@Id注解存在时，获取主键生成策略，获取id的值，为null的表示数据库自动生成
                 if (idAnnotation != null) {
@@ -124,6 +121,33 @@ public class EntityMapping {
 
             map.put(columnName, value);
         }
+
+        return map;
+    }
+
+    public Map<String, Object> getIdColumnAndValueMap() {
+        Map<String, Object> map = new HashMap<>();
+        String getIdMethod = "getId";
+        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        String idColumnName = "id";
+        int i = 0;
+        for (Field field : fields) {
+            Id id = field.getAnnotation(Id.class);
+            Column column = field.getAnnotation(Column.class);
+            if (id != null) {
+                idColumnName = field.getName();
+                if (column != null && !"".equals(column.name())) {
+                    idColumnName = column.name();
+                }
+                getIdMethod = "get" + idColumnName.substring(0, 1).toUpperCase() + idColumnName.substring(1);
+                i++;
+            }
+        }
+        // 必须定义@Id注解，否则报错
+        if (i == 0) throw new IllegalArgumentException(object + " must define '@Id' annotation, but you not!");
+
+        Object value = ReflectUtils.invoke(object, getIdMethod);
+        map.put(idColumnName, value);
 
         return map;
     }

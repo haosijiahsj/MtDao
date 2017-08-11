@@ -2,11 +2,8 @@ package com.hhssjj.mt.processors;
 
 import com.hhssjj.mt.annotations.db.Delete;
 import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
-import com.hhssjj.mt.processors.sql.DeleteSqlCreator;
-import com.hhssjj.mt.processors.sql.SqlCreator;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.hhssjj.mt.sql.DeleteSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.

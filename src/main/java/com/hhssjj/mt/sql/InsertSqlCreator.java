@@ -1,12 +1,12 @@
-package com.hhssjj.mt.processors.sql;
+package com.hhssjj.mt.sql;
 
+import com.hhssjj.mt.mapping.EntityMapping;
+import com.hhssjj.mt.support.SqlType;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
-import javax.persistence.Table;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -93,7 +93,6 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
-        Field[] fields = getFields();
         String tableName = getTableName();
 
         // 拼装表名
@@ -101,7 +100,7 @@ public class InsertSqlCreator extends SqlCreator {
 
         int i = 0;
         valueMap = new HashMap<>();
-        Map<String, Object> map = getColumnAndValueMapFromObject();
+        Map<String, Object> map = entityMapping.getColumnAndValueMapFromObject();
         for (String key : map.keySet()) {
             columnBuilder.append("`" + key + "`,");
             valueBuilder.append("?,");
@@ -121,8 +120,37 @@ public class InsertSqlCreator extends SqlCreator {
         return sql;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public String createPreparedSqlFromMap() {
+    public String createPreparedSqlFromMap(String tableName) {
+        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+        StringBuilder columnBuilder = new StringBuilder("(");
+        StringBuilder valueBuilder = new StringBuilder("(");
+
+        // 拼装表名
+        sqlBuilder.append("`" + tableName + "`");
+
+        String typeName = parameter.getClass().getTypeName();
+        if (!typeName.contains("Map")) throw new IllegalArgumentException("In this mode, you must set a 'Map' parameter");
+
+        Map<String, Object> map = (Map<String, Object>) parameter;
+        int i = 0;
+        for (String key : map.keySet()) {
+            columnBuilder.append("`" + key + "`,");
+            valueBuilder.append("?,");
+            valueMap.put(++i, map.get(key));
+        }
+
+        columnBuilder.append(")");
+        valueBuilder.append(")");
+
+        sqlBuilder.append(columnBuilder.toString().replace(",)", ")"));
+        sqlBuilder.append(" VALUES ");
+        sqlBuilder.append(valueBuilder.toString().replace(",)", ")"));
+
+        String sql = sqlBuilder.toString();
+        logger.info("sql statement:" + sql);
+
         return null;
     }
 }

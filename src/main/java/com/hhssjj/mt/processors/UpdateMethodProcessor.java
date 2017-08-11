@@ -2,8 +2,8 @@ package com.hhssjj.mt.processors;
 
 import com.hhssjj.mt.annotations.db.Update;
 import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
-import com.hhssjj.mt.processors.sql.SqlCreator;
-import com.hhssjj.mt.processors.sql.UpdateSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
+import com.hhssjj.mt.sql.UpdateSqlCreator;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.

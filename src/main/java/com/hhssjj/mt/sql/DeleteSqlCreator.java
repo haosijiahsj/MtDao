@@ -1,9 +1,7 @@
-package com.hhssjj.mt.processors.sql;
+package com.hhssjj.mt.sql;
 
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 /**
@@ -39,7 +37,7 @@ public class DeleteSqlCreator extends SqlCreator {
     }
 
     @Override
-    public String createPreparedSqlFromMap() {
+    public String createPreparedSqlFromMap(String tableName) {
         return null;
     }
 }

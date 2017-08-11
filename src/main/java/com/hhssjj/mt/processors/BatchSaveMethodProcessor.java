@@ -1,8 +1,8 @@
 package com.hhssjj.mt.processors;
 
 import com.hhssjj.mt.annotations.db.BatchSave;
-import com.hhssjj.mt.processors.sql.InsertSqlCreator;
-import com.hhssjj.mt.processors.sql.SqlCreator;
+import com.hhssjj.mt.sql.InsertSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
 
 /**
  * Created by 胡胜钧 on 8/7 0007.

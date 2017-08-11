@@ -1,20 +1,14 @@
 package com.hhssjj.mt.processors;
 
 import com.hhssjj.mt.annotations.db.Save;
+import com.hhssjj.mt.mapping.EntityMapping;
 import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
-import com.hhssjj.mt.processors.sql.InsertSqlCreator;
-import com.hhssjj.mt.processors.sql.SqlCreator;
+import com.hhssjj.mt.sql.InsertSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
+import com.hhssjj.mt.support.SqlType;
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.
@@ -24,18 +18,26 @@ public class SaveMethodProcessor extends BaseMethodProcessor<Save> {
 
     @Override
     public Object process() {
-        final SqlCreator sqlCreator = new InsertSqlCreator();
+        SqlCreator sqlCreator = new InsertSqlCreator();
         sqlCreator.setParameter(parameters[0]);
+        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.INSERT));
 
         String userSql = methodAnnotation.value();
+        String tableName = methodAnnotation.tabName();
         boolean isReturnId = methodAnnotation.returnId();
 
+        if (!"".equals(userSql) && !"".equals(tableName)) {
+            throw new IllegalArgumentException("You can't use them at the same time, choose one of them");
+        }
         // 支持用户自定义sql
         MyPreparedStatementCreator myPreparedStatementCreator;
-        if ("".equals(userSql)) {
-            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator);
-        } else {
+        if (!"".equals(userSql)) {
             myPreparedStatementCreator = new MyPreparedStatementCreator(userSql, getParameterMap());
+        } else if (!"".equals(tableName)) {
+            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator.createPreparedSqlFromMap(tableName),
+                    getParameterMap());
+        } else{
+            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator);
         }
         if (isReturnId) {
             KeyHolder keyHolder = new GeneratedKeyHolder();

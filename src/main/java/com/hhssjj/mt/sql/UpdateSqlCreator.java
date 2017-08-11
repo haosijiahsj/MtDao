@@ -1,4 +1,4 @@
-package com.hhssjj.mt.processors.sql;
+package com.hhssjj.mt.sql;
 
 import org.apache.log4j.Logger;
 
@@ -119,7 +119,7 @@ public class UpdateSqlCreator extends SqlCreator {
     }
 
     @Override
-    public String createPreparedSqlFromMap() {
+    public String createPreparedSqlFromMap(String tableName) {
         return null;
     }
 }

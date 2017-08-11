@@ -1,6 +1,6 @@
 package com.hhssjj.mt.processors.creator;
 
-import com.hhssjj.mt.processors.sql.SqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
