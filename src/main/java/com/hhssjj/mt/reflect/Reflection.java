@@ -2,20 +2,22 @@ package com.hhssjj.mt.reflect;
 
 import org.apache.log4j.Logger;
 
-import javax.persistence.Column;
 import java.lang.reflect.*;
 import java.util.*;
+
+import static com.hhssjj.mt.utils.Preconditions.checkArgument;
+import static com.hhssjj.mt.utils.Preconditions.checkNotNull;
 
 /**
  * Created by 胡胜钧 on 8/7 0007.
  * 反射工具类
  */
-public class ReflectUtils {
+public class Reflection {
 
-    private static Logger logger = Logger.getLogger(ReflectUtils.class);
+    private static Logger logger = Logger.getLogger(Reflection.class);
 
     /**
-     * 判断是否是Set类型的
+     * 判断是否是List类型的
      * @param object
      * @return
      */
@@ -46,14 +48,30 @@ public class ReflectUtils {
         }
     }
 
+    /**
+     * 返回该类自己定义的字段
+     * @param object
+     * @return
+     */
     public static Field[] getDeclaredFields(Object object) {
         return object.getClass().getDeclaredFields();
     }
 
+    /**
+     * 返回该类自己定义的方法
+     * @param object
+     * @return
+     */
     public static Method[] getDeclaredMethods(Object object) {
         return object.getClass().getDeclaredMethods();
     }
 
+    /**
+     * 通过方法名称执行方法
+     * @param object
+     * @param methodName
+     * @return
+     */
     public static Object invoke(Object object, String methodName) {
         Object value;
         try {
@@ -63,5 +81,22 @@ public class ReflectUtils {
         }
         return value;
     }
+
+    /**
+     * 代理接口
+     * @param interfaceType
+     * @param handler
+     * @param <T>
+     * @return
+     */
+    public static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
+        checkArgument(interfaceType.isInterface(), interfaceType + "is not a interface");
+        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(),
+                new Class<?>[] { interfaceType },
+                handler);
+        return interfaceType.cast(object);
+    }
+
+    private Reflection() {}
 
 }

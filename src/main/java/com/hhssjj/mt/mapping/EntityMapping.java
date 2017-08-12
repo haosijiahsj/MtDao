@@ -1,8 +1,9 @@
 package com.hhssjj.mt.mapping;
 
-import com.hhssjj.mt.reflect.ReflectUtils;
+import com.hhssjj.mt.reflect.Reflection;
 import com.hhssjj.mt.support.SqlType;
 import com.hhssjj.mt.support.idStrategy.AutoCreateIdValue;
+import com.hhssjj.mt.utils.Preconditions;
 
 import javax.persistence.*;
 import java.lang.reflect.Field;
@@ -16,6 +17,10 @@ import java.util.Map;
 public class EntityMapping {
     private Object object;
     private SqlType sqlType;
+
+    public EntityMapping(Object object) {
+        this.object = object;
+    }
 
     public EntityMapping(Object object, SqlType sqlType) {
         this.object = object;
@@ -33,36 +38,43 @@ public class EntityMapping {
         String tableName = entityName;
         Entity entity = object.getClass().getAnnotation(Entity.class);
 
-        if (entity == null)
-            throw new IllegalStateException(object + " is not a database entity, maybe you should add annotation '@Entity'");
-        else {
-            Table table = object.getClass().getAnnotation(Table.class);
-            if (table != null && !"".equals(table.name())) tableName = table.name();
-        }
+        Preconditions.checkNotNull(entity,
+                object + " is not a database entity, maybe you should add annotation '@Entity'");
+
+        Table table = object.getClass().getAnnotation(Table.class);
+        if (table != null && !"".equals(table.name())) tableName = table.name();
 
         entityAndTableMap.put(entityName, tableName);
 
         return entityAndTableMap;
     }
 
-    public String getTableName() {
-        Map<String, String> entityAndTableMap = new HashMap<>();
+    public String getTableName(Class<?> clazz) {
+        String tableName = clazz.getName();
+        Entity entity = clazz.getAnnotation(Entity.class);
 
-        String entityName = object.getClass().getName();
-        String tableName = entityName;
-        Entity entity = object.getClass().getAnnotation(Entity.class);
+        Preconditions.checkNotNull(entity,
+                object + " is not a database entity, maybe you should add annotation '@Entity'");
 
-        if (entity == null)
-            throw new IllegalStateException(object + " is not a database entity, maybe you should add annotation '@Entity'");
-        else {
-            Table table = object.getClass().getAnnotation(Table.class);
-            if (table != null && !"".equals(table.name())) tableName = table.name();
-        }
+        Table table = clazz.getAnnotation(Table.class);
+        if (table != null && !"".equals(table.name())) tableName = table.name();
+
         return tableName;
     }
+    /**
+     * 扫描实体类得到表名
+     * @return
+     */
+    public String getTableName() {
+        return getTableName(object.getClass());
+    }
 
+    /**
+     * 获取id列名，用户定义的不一定是id
+     * @return
+     */
     public String getIdColumnName() {
-        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        Field[] fields = Reflection.getDeclaredFields(object);
         for (Field field : fields) {
             Id id = field.getAnnotation(Id.class);
             Column column = field.getAnnotation(Column.class);
@@ -113,7 +125,7 @@ public class EntityMapping {
     public Map<String, Object> getColumnAndValueMapFromObject() {
         Map<String, Object> map = new LinkedHashMap<>();
 
-        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        Field[] fields = Reflection.getDeclaredFields(object);
         for (Field field : fields) {
             Id idAnnotation = field.getAnnotation(Id.class);
             Column columnAnnotation = field.getAnnotation(Column.class);
@@ -129,7 +141,7 @@ public class EntityMapping {
                 }
             }
 
-            Object value = ReflectUtils.invoke(object, getMethodName);
+            Object value = Reflection.invoke(object, getMethodName);
 
             // 当sql语句为插入类型的时候去生成主键
             if (SqlType.INSERT.equals(sqlType)) {
@@ -145,9 +157,10 @@ public class EntityMapping {
             // 扫描到@Column注解存在时，则设定列名为用户定义的列名
             if (columnAnnotation != null) {
                 boolean nullAble = columnAnnotation.nullable();
-                if (value == null) {
-                    if (!nullAble) throw new IllegalArgumentException("'" + columnName + "' can't accept null value");
-                }
+
+                Preconditions.checkArgument(nullAble,
+                        "'" + columnName + "' can't accept null value");
+
                 columnName = columnAnnotation.name();
             }
 
@@ -157,10 +170,14 @@ public class EntityMapping {
         return map;
     }
 
+    /**
+     * 获取id列与值的映射
+     * @return
+     */
     public Map<String, Object> getIdColumnAndValueMap() {
         Map<String, Object> map = new HashMap<>();
         String getIdMethod = "getId";
-        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        Field[] fields = Reflection.getDeclaredFields(object);
         String idColumnName = "id";
         int i = 0;
         for (Field field : fields) {
@@ -178,14 +195,18 @@ public class EntityMapping {
         // 必须定义@Id注解，否则报错
         if (i == 0) throw new IllegalArgumentException(object + " must define '@Id' annotation, but you not!");
 
-        Object value = ReflectUtils.invoke(object, getIdMethod);
+        Object value = Reflection.invoke(object, getIdMethod);
         map.put(idColumnName, value);
 
         return map;
     }
 
+    /**
+     * 获取id的值
+     * @return
+     */
     public Object getIdValue() {
-        Field[] fields = ReflectUtils.getDeclaredFields(object);
+        Field[] fields = Reflection.getDeclaredFields(object);
         for (Field field : fields) {
             Id id = field.getAnnotation(Id.class);
             Column column = field.getAnnotation(Column.class);
@@ -195,7 +216,7 @@ public class EntityMapping {
                     idColumnName = column.name();
                 }
                 String getIdMethod = "get" + idColumnName.substring(0, 1).toUpperCase() + idColumnName.substring(1);
-                return ReflectUtils.invoke(object, getIdMethod);
+                return Reflection.invoke(object, getIdMethod);
             }
         }
         throw new IllegalArgumentException(object + " must define '@Id' annotation, but you not!");

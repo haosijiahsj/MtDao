@@ -46,7 +46,7 @@ public class MtDaoInvocationHandler implements InvocationHandler {
             }
 
             if (methodProcessor == null) {
-                throw new IllegalStateException("没有找到相关代理方法");
+                throw new IllegalStateException("not found proxy method, maybe it is't implements");
             }
 
             // 给父抽象类中设置相关值
@@ -59,6 +59,6 @@ public class MtDaoInvocationHandler implements InvocationHandler {
             return methodProcessor.process();
         }
 
-        throw new IllegalStateException("MtDao代理接口中的方法没有发现相关注解");
+        throw new IllegalStateException("in MtDao proxy interface not found method annotation like '@Save, @Update etc...'");
     }
 }

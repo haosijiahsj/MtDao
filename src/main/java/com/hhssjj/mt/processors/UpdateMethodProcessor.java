@@ -5,7 +5,10 @@ import com.hhssjj.mt.mapping.EntityMapping;
 import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.sql.UpdateSqlCreator;
+import com.hhssjj.mt.support.Null;
+import com.hhssjj.mt.support.SqlCreateType;
 import com.hhssjj.mt.support.SqlType;
+import com.hhssjj.mt.utils.Preconditions;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.
@@ -13,25 +16,30 @@ import com.hhssjj.mt.support.SqlType;
 public class UpdateMethodProcessor extends BaseMethodProcessor<Update> {
     @Override
     public Object process() {
-        SqlCreator sqlCreator = new UpdateSqlCreator();
-        sqlCreator.setParameter(parameters[0]);
-        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.UPDATE));
         String userSql = methodAnnotation.value();
         String tableName = methodAnnotation.tableName();
+        Class<?> entityClass = methodAnnotation.entityClass();
 
-        if (!"".equals(userSql) && !"".equals(tableName)) {
-            throw new IllegalArgumentException("You can't use them at the same time, choose one of them");
-        }
+        Preconditions.checkArgument(!"".equals(userSql) && !"".equals(tableName),
+                "You can't set parameter 'value' and 'tableName' at the same time, choose one of them");
+
+        SqlCreator sqlCreator = new UpdateSqlCreator(userSql, tableName, entityClass);
+        sqlCreator.setParameter(parameters[0]);
+        sqlCreator.setParameters(parameters);
+        sqlCreator.setParameterAnnotations(parameterAnnotations);
+        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.UPDATE));
+
         MyPreparedStatementCreator myPreparedStatementCreator;
+        SqlCreateType sqlCreateType;
         // 用户自定义sql支持
         if (!"".equals(userSql)) {
-            myPreparedStatementCreator = new MyPreparedStatementCreator(userSql, super.getParameterMap());
-        } else if (!"".equals(tableName)){
-            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator.createPreparedSqlFromMap(tableName),
-                    sqlCreator.getValueMap());
+            sqlCreateType = SqlCreateType.USER_DEFINE;
+        } else if (!"".equals(tableName) || !Null.class.equals(entityClass)){
+            sqlCreateType = SqlCreateType.FROM_MAP;
         } else {
-            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator);
+            sqlCreateType = SqlCreateType.AUTO_CREATE;
         }
+        myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator, sqlCreateType);
         return jdbcTemplate.update(myPreparedStatementCreator);
     }
 }

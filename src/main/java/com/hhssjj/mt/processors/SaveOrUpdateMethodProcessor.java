@@ -1,6 +1,14 @@
 package com.hhssjj.mt.processors;
 
+import com.hhssjj.mt.annotations.db.Save;
 import com.hhssjj.mt.annotations.db.SaveOrUpdate;
+import com.hhssjj.mt.mapping.EntityMapping;
+import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
+import com.hhssjj.mt.sql.InsertSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
+import com.hhssjj.mt.sql.UpdateSqlCreator;
+import com.hhssjj.mt.support.SqlCreateType;
+import com.hhssjj.mt.support.SqlType;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -11,27 +19,25 @@ public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdat
 
     @Override
     public Object process() {
-        Object id = null;
-        try {
-            id = parameters[0].getClass()
-                    .getDeclaredMethod("getId")
-                    .invoke(parameters[0]);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        BaseMethodProcessor methodProcessor;
-        // 通过实体类中的id是否存在来进行判断，存在则更新不存在则插入
-        if (id == null) {
-            methodProcessor = new SaveMethodProcessor();
-        } else {
-            methodProcessor = new UpdateMethodProcessor();
-        }
-        methodProcessor.setJdbcTemplate(jdbcTemplate);
-        methodProcessor.setMethodAnnotation(methodAnnotation);
-        methodProcessor.setParameters(parameters);
-        methodProcessor.setParameterAnnotations(parameterAnnotations);
-        methodProcessor.setMethod(method);
+        EntityMapping entityMapping = new EntityMapping(parameters[0]);
+        Object idValue = entityMapping.getIdValue();
+        SqlCreator sqlCreator;
+        if (idValue == null) {
+            sqlCreator = new InsertSqlCreator();
+            sqlCreator.setParameter(parameters[0]);
+            sqlCreator.setParameters(parameters);
+            sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.INSERT));
 
-        return methodProcessor.process();
+        } else {
+            sqlCreator = new UpdateSqlCreator();
+            sqlCreator.setParameter(parameters[0]);
+            sqlCreator.setParameters(parameters);
+            sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.UPDATE));
+        }
+
+        MyPreparedStatementCreator myPreparedStatementCreator =
+                new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
+        return jdbcTemplate.update(myPreparedStatementCreator);
     }
+
 }

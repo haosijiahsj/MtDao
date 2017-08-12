@@ -1,6 +1,6 @@
 package com.hhssjj.mt.sql;
 
-import com.hhssjj.mt.reflect.ReflectUtils;
+import com.hhssjj.mt.reflect.Reflection;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
@@ -19,12 +19,14 @@ public class InsertSqlCreator extends SqlCreator {
     private Logger logger = Logger.getLogger(InsertSqlCreator.class);
     private String sql;
     private String tableName;
+    private Class<?> entityClass;
 
     public InsertSqlCreator() {}
 
-    public InsertSqlCreator(String sql, String tableName) {
+    public InsertSqlCreator(String sql, String tableName, Class<?> entityClass) {
         this.sql = sql;
         this.tableName = tableName;
+        this.entityClass = entityClass;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
-        Field[] fields = ReflectUtils.getDeclaredFields(parameter);
+        Field[] fields = Reflection.getDeclaredFields(parameter);
         String tableName = entityMapping.getTableName();
 
         // 拼装表名
@@ -102,7 +104,7 @@ public class InsertSqlCreator extends SqlCreator {
             valueMap.put(++i, value);
         }
         logger.info("sql statement: " + this.sql);
-        return sql;
+        return this.sql;
     }
 
     @Override
@@ -147,10 +149,8 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder valueBuilder = new StringBuilder("(");
 
         // 拼装表名
+        if ("".equals(this.tableName)) this.tableName = entityMapping.getTableName(entityClass);
         sqlBuilder.append("`").append(this.tableName).append("`");
-
-        String typeName = parameter.getClass().getTypeName();
-        if (!typeName.contains("Map")) throw new IllegalArgumentException("In this mode, you must set a 'Map' parameter");
 
         Map<String, Object> map = (Map<String, Object>) parameter;
         int i = 0;
@@ -164,9 +164,9 @@ public class InsertSqlCreator extends SqlCreator {
         columnBuilder.append(")");
         valueBuilder.append(")");
 
-        sqlBuilder.append(columnBuilder.toString().replace(",)", ")"));
-        sqlBuilder.append(" VALUES ");
-        sqlBuilder.append(valueBuilder.toString().replace(",)", ")"));
+        sqlBuilder.append(columnBuilder.toString().replace(",)", ")"))
+                .append(" VALUES ")
+                .append(valueBuilder.toString().replace(",)", ")"));
 
         String sql = sqlBuilder.toString();
         logger.info("sql statement:" + sql);

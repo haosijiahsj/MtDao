@@ -1,5 +1,6 @@
 package com.hhssjj.mt.sql;
 
+import com.hhssjj.mt.annotations.db.Delete;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -9,7 +10,15 @@ import java.util.HashMap;
  */
 public class DeleteSqlCreator extends SqlCreator {
 
-    protected Logger logger = Logger.getLogger(DeleteSqlCreator.class);
+    private Logger logger = Logger.getLogger(DeleteSqlCreator.class);
+
+    private String sql;
+
+    public DeleteSqlCreator() {}
+
+    public DeleteSqlCreator(String sql) {
+        this.sql = sql;
+    }
 
     @Override
     public String createSql() {
@@ -29,8 +38,13 @@ public class DeleteSqlCreator extends SqlCreator {
     }
 
     @Override
-    public String createUserSql(String sql) {
-        logger.info("sql statement：" + sql);
+    public String createUserSql() {
+        valueMap = new HashMap<>();
+        int i = 0;
+        for (Object value : parameters) {
+            valueMap.put(++i, value);
+        }
+        logger.info("sql statement: " + this.sql);
         return sql;
     }
 
@@ -53,7 +67,7 @@ public class DeleteSqlCreator extends SqlCreator {
     }
 
     @Override
-    public String createPreparedSqlFromMap(String tableName) {
+    public String createPreparedSqlFromMap() {
         return null;
     }
 }

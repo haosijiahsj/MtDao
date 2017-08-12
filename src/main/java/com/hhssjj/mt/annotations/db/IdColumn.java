@@ -3,11 +3,11 @@ package com.hhssjj.mt.annotations.db;
 import java.lang.annotation.*;
 
 /**
- * Created by 胡胜钧 on 8/4 0004.
+ * Created by 胡胜钧 on 8/12 0012.
  */
 @Documented
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SaveOrUpdate {
-
+public @interface IdColumn {
+    String value();
 }

@@ -1,5 +1,6 @@
 package com.hhssjj.mt;
 
+import com.hhssjj.mt.reflect.Reflection;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.lang.reflect.Proxy;
@@ -11,15 +12,9 @@ public class MtDaoProxyFactory {
 
     private MtDaoProxyFactory() {}
 
-    @SuppressWarnings("unchecked")
-    public static <T> T create(Class<T> clazz, JdbcTemplate jdbcTemplate) {
+    public static <T> T create(Class<T> interfaceType, JdbcTemplate jdbcTemplate) {
         MtDaoInvocationHandler invocationHandler = new MtDaoInvocationHandler(jdbcTemplate);
 
-        // 不是接口不能被代理
-        if (!clazz.isInterface()) throw new IllegalArgumentException(clazz + "不是接口，不能被代理！");
-
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
-                new Class[] { clazz },
-                invocationHandler);
+        return Reflection.newProxy(interfaceType, invocationHandler);
     }
 }

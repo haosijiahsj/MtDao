@@ -1,9 +1,11 @@
 package com.hhssjj.mt.sql;
 
-import com.hhssjj.mt.reflect.ReflectUtils;
+import com.hhssjj.mt.annotations.db.IdColumn;
+import com.hhssjj.mt.reflect.Reflection;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
@@ -19,12 +21,21 @@ public class UpdateSqlCreator extends SqlCreator {
     private Logger logger = Logger.getLogger(UpdateSqlCreator.class);
     private String sql;
     private String tableName;
+    private Class<?> entityClass;
+
+    public UpdateSqlCreator() {}
+
+    public UpdateSqlCreator(String sql, String tableName, Class<?> clazz) {
+        this.sql = sql;
+        this.tableName = tableName;
+        this.entityClass = clazz;
+    }
 
     @Override
     public String createSql() {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
         String tableName = entityMapping.getTableName();
-        Field[] fields = ReflectUtils.getDeclaredFields(parameter);
+        Field[] fields = Reflection.getDeclaredFields(parameter);
         sqlBuilder.append("`").append(tableName).append("` SET ");
         for (Field field : fields) {
             Column column = field.getAnnotation(Column.class);
@@ -78,7 +89,12 @@ public class UpdateSqlCreator extends SqlCreator {
 
     @Override
     public String createUserSql() {
-        logger.info("sql statement: " + sql);
+        valueMap = new HashMap<>();
+        int i = 0;
+        for (Object value : parameters) {
+            valueMap.put(++i, value);
+        }
+        logger.info("sql statement: " + this.sql);
         return sql;
     }
 
@@ -101,7 +117,7 @@ public class UpdateSqlCreator extends SqlCreator {
         }
 
         sqlBuilder.append("WHERE `").append(idColumnName).append("` = ?");
-        valueMap.put(++i, entityMapping.getIdColumnAndValueMap().get(idColumnName));
+        valueMap.put(++i, entityMapping.getIdValue());
         String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
         logger.info("sql statement:" + sql);
         return sql;
@@ -110,9 +126,17 @@ public class UpdateSqlCreator extends SqlCreator {
     @Override
     public String createPreparedSqlFromMap() {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
-        String idColumnName = entityMapping.getIdColumnName();
+        String idColumnName = "id";
 
-        sqlBuilder.append("`").append(tableName).append("` SET ");
+        // 方法参数中的注解，若不指定，则默认为id
+        if (parameterAnnotations != null && parameterAnnotations[0].length > 0) {
+            for (Annotation an : parameterAnnotations[0]) {
+                if (an instanceof IdColumn) idColumnName = ((IdColumn) an).value();
+            }
+        }
+
+        if ("".equals(this.tableName)) this.tableName = entityMapping.getTableName(entityClass);
+        sqlBuilder.append("`").append(this.tableName).append("` SET ");
 
         Map<String, Object> map = (Map<String, Object>) parameter;
 
@@ -125,7 +149,7 @@ public class UpdateSqlCreator extends SqlCreator {
         }
 
         sqlBuilder.append("WHERE `").append(idColumnName).append("` = ?");
-        valueMap.put(++i, entityMapping.getIdValue());
+        valueMap.put(++i, map.get(idColumnName));
         String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
         logger.info("sql statement:" + sql);
         return sql;

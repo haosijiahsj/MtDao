@@ -11,5 +11,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Query {
     String value() default "";
-    boolean userCache() default false;
 }

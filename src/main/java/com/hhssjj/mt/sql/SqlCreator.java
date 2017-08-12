@@ -1,15 +1,9 @@
 package com.hhssjj.mt.sql;
 
 import com.hhssjj.mt.mapping.EntityMapping;
-import com.hhssjj.mt.reflect.ReflectUtils;
-import com.hhssjj.mt.support.SqlType;
-import com.hhssjj.mt.support.idStrategy.AutoCreateIdValue;
 import org.apache.log4j.Logger;
 
-import javax.persistence.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -29,8 +23,10 @@ public abstract class SqlCreator {
 
     protected Object[] parameters;
 
+    protected Annotation[][] parameterAnnotations;
+
     /**
-     * 创建拼接的sql
+     * 创建拼接的sql，有注入风险，不使用了
      * @return
      */
     public abstract String createSql();
@@ -65,14 +61,9 @@ public abstract class SqlCreator {
         this.entityMapping = entityMapping;
     }
 
-    /**
-     * 获取实体类注解
-     * @return
-     */
-    protected Annotation[] getAnnotations() {
-        return parameter.getClass().getAnnotations();
+    public void setParameterAnnotations(Annotation[][] parameterAnnotations) {
+        this.parameterAnnotations = parameterAnnotations;
     }
-
 
     public Map<Integer, Object> getValueMap() {
         return valueMap;

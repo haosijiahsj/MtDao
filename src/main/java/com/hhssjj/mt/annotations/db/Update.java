@@ -1,5 +1,7 @@
 package com.hhssjj.mt.annotations.db;
 
+import com.hhssjj.mt.support.Null;
+
 import java.lang.annotation.*;
 
 /**
@@ -11,4 +13,5 @@ import java.lang.annotation.*;
 public @interface Update {
     String value() default "";
     String tableName() default "";
+    Class<?> entityClass() default Null.class;
 }

@@ -1,6 +1,7 @@
 package com.hhssjj.mt;
 
 import com.hhssjj.mt.annotations.MtDao;
+import com.hhssjj.mt.reflect.Reflection;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -28,20 +29,18 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Field[] fields = bean.getClass().getDeclaredFields();
+        Field[] fields = Reflection.getDeclaredFields(bean);
         // 扫描@Mt注解
         if (fields != null) {
             for (Field field : fields) {
                 MtDao mtDaoAnnotation = field.getAnnotation(MtDao.class);
-                if (mtDaoAnnotation == null) {
-                    continue;
-                }
+                if (mtDaoAnnotation == null) continue;
                 Object mtDao = MtDaoProxyFactory.create(field.getType(), jdbcTemplate);
                 field.setAccessible(true);
                 try {
                     field.set(bean, mtDao);
                 } catch (IllegalAccessException e) {
-                    throw new IllegalStateException("注入MtDao失败");
+                    throw new IllegalStateException("can't create a MtDao proxy for " + bean);
                 }
             }
         }
