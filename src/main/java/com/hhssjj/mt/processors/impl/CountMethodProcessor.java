@@ -1,6 +1,7 @@
-package com.hhssjj.mt.processors;
+package com.hhssjj.mt.processors.impl;
 
 import com.hhssjj.mt.annotations.db.Count;
+import com.hhssjj.mt.processors.BaseMethodProcessor;
 
 /**
  * Created by hushengjun on 2017/8/9.

@@ -1,4 +1,4 @@
-package com.hhssjj.mt.processors.setter;
+package com.hhssjj.mt.support.jdbcTemplate;
 
 import com.hhssjj.mt.sql.SqlCreator;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;

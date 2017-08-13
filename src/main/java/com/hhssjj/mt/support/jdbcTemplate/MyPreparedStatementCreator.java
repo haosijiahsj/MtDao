@@ -1,4 +1,4 @@
-package com.hhssjj.mt.processors.creator;
+package com.hhssjj.mt.support.jdbcTemplate;
 
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.support.SqlCreateType;
@@ -62,7 +62,7 @@ public class MyPreparedStatementCreator implements PreparedStatementCreator {
             } else {
                 preparedStatement.setObject(key, value);
             }
-            sb.append(value + ",");
+            sb.append(value).append(",");
         }
         logger.info("sql parameter:" + sb.append("]").toString().replace(",]", "]"));
 

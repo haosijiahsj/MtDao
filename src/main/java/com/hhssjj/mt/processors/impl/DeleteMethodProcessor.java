@@ -1,8 +1,9 @@
-package com.hhssjj.mt.processors;
+package com.hhssjj.mt.processors.impl;
 
 import com.hhssjj.mt.annotations.db.Delete;
-import com.hhssjj.mt.mapping.EntityMapping;
-import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
+import com.hhssjj.mt.mapping.EntityScanner;
+import com.hhssjj.mt.processors.BaseMethodProcessor;
+import com.hhssjj.mt.support.jdbcTemplate.MyPreparedStatementCreator;
 import com.hhssjj.mt.sql.DeleteSqlCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.support.SqlCreateType;
@@ -19,7 +20,7 @@ public class DeleteMethodProcessor extends BaseMethodProcessor<Delete> {
         SqlCreator sqlCreator = new DeleteSqlCreator(userSql);
         sqlCreator.setParameter(parameters[0]);
         sqlCreator.setParameters(parameters);
-        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.DELETE));
+        sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.DELETE));
 
         MyPreparedStatementCreator myPreparedStatementCreator;
         if (!"".equals(userSql)) {

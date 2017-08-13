@@ -35,7 +35,7 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
         Field[] fields = Reflection.getDeclaredFields(parameter);
-        String tableName = entityMapping.getTableName();
+        String tableName = entityScanner.getTableName();
 
         // 拼装表名
         sqlBuilder.append("`").append(tableName).append("`");
@@ -114,14 +114,14 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         StringBuilder columnBuilder = new StringBuilder("(");
         StringBuilder valueBuilder = new StringBuilder("(");
-        String tableName = entityMapping.getTableName();
+        String tableName = entityScanner.getTableName();
 
         // 拼装表名
         sqlBuilder.append("`").append(tableName).append("`");
 
         int i = 0;
         valueMap = new HashMap<>();
-        Map<String, Object> map = entityMapping.getColumnAndValueMapFromObject();
+        Map<String, Object> map = entityScanner.getColumnAndValueMapFromObject();
         for (String key : map.keySet()) {
             columnBuilder.append("`").append(key).append("`,");
             valueBuilder.append("?,");
@@ -149,7 +149,7 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder valueBuilder = new StringBuilder("(");
 
         // 拼装表名
-        if ("".equals(this.tableName)) this.tableName = entityMapping.getTableName(entityClass);
+        if ("".equals(this.tableName)) this.tableName = entityScanner.getTableName(entityClass);
         sqlBuilder.append("`").append(this.tableName).append("`");
 
         Map<String, Object> map = (Map<String, Object>) parameter;

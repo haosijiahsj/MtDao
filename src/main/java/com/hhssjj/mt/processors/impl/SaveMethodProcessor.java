@@ -1,8 +1,9 @@
-package com.hhssjj.mt.processors;
+package com.hhssjj.mt.processors.impl;
 
 import com.hhssjj.mt.annotations.db.Save;
-import com.hhssjj.mt.mapping.EntityMapping;
-import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
+import com.hhssjj.mt.mapping.EntityScanner;
+import com.hhssjj.mt.processors.BaseMethodProcessor;
+import com.hhssjj.mt.support.jdbcTemplate.MyPreparedStatementCreator;
 import com.hhssjj.mt.sql.InsertSqlCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.support.Null;
@@ -32,7 +33,7 @@ public class SaveMethodProcessor extends BaseMethodProcessor<Save> {
         SqlCreator sqlCreator = new InsertSqlCreator(userSql, tableName, entityClass);
         sqlCreator.setParameter(parameters[0]);
         sqlCreator.setParameters(parameters);
-        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.INSERT));
+        sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.INSERT));
 
         // 支持用户自定义sql
         MyPreparedStatementCreator myPreparedStatementCreator;

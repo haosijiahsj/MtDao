@@ -34,7 +34,7 @@ public class UpdateSqlCreator extends SqlCreator {
     @Override
     public String createSql() {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
-        String tableName = entityMapping.getTableName();
+        String tableName = entityScanner.getTableName();
         Field[] fields = Reflection.getDeclaredFields(parameter);
         sqlBuilder.append("`").append(tableName).append("` SET ");
         for (Field field : fields) {
@@ -80,7 +80,7 @@ public class UpdateSqlCreator extends SqlCreator {
 
         }
 
-        Object id = entityMapping.getIdValue();
+        Object id = entityScanner.getIdValue();
         sqlBuilder.append("WHERE `id` = " + id);
         String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
         logger.info("sql statement: " + sql);
@@ -101,12 +101,12 @@ public class UpdateSqlCreator extends SqlCreator {
     @Override
     public String createPreparedSql() {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
-        String tableName = entityMapping.getTableName();
-        String idColumnName = entityMapping.getIdColumnName();
+        String tableName = entityScanner.getTableName();
+        String idColumnName = entityScanner.getIdColumnName();
 
         sqlBuilder.append("`").append(tableName).append("` SET ");
 
-        Map<String, Object> map = entityMapping.getColumnAndValueMapFromObject();
+        Map<String, Object> map = entityScanner.getColumnAndValueMapFromObject();
 
         int i = 0;
         valueMap = new HashMap<>();
@@ -117,7 +117,7 @@ public class UpdateSqlCreator extends SqlCreator {
         }
 
         sqlBuilder.append("WHERE `").append(idColumnName).append("` = ?");
-        valueMap.put(++i, entityMapping.getIdValue());
+        valueMap.put(++i, entityScanner.getIdValue());
         String sql = sqlBuilder.toString().replace(",WHERE", " WHERE");
         logger.info("sql statement:" + sql);
         return sql;
@@ -135,7 +135,7 @@ public class UpdateSqlCreator extends SqlCreator {
             }
         }
 
-        if ("".equals(this.tableName)) this.tableName = entityMapping.getTableName(entityClass);
+        if ("".equals(this.tableName)) this.tableName = entityScanner.getTableName(entityClass);
         sqlBuilder.append("`").append(this.tableName).append("` SET ");
 
         Map<String, Object> map = (Map<String, Object>) parameter;

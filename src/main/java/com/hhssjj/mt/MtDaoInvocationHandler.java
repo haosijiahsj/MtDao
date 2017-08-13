@@ -4,7 +4,12 @@ import com.hhssjj.mt.annotations.db.Delete;
 import com.hhssjj.mt.annotations.db.Save;
 import com.hhssjj.mt.annotations.db.SaveOrUpdate;
 import com.hhssjj.mt.annotations.db.Update;
+import com.hhssjj.mt.exceptions.AnnotationNotFoundException;
 import com.hhssjj.mt.processors.*;
+import com.hhssjj.mt.processors.impl.DeleteMethodProcessor;
+import com.hhssjj.mt.processors.impl.SaveMethodProcessor;
+import com.hhssjj.mt.processors.impl.SaveOrUpdateMethodProcessor;
+import com.hhssjj.mt.processors.impl.UpdateMethodProcessor;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -46,7 +51,7 @@ public class MtDaoInvocationHandler implements InvocationHandler {
             }
 
             if (methodProcessor == null) {
-                throw new IllegalStateException("not found proxy method, maybe it is't implements");
+                throw new IllegalStateException("not found proxy method, maybe it is't implemented");
             }
 
             // 给父抽象类中设置相关值
@@ -59,6 +64,6 @@ public class MtDaoInvocationHandler implements InvocationHandler {
             return methodProcessor.process();
         }
 
-        throw new IllegalStateException("in MtDao proxy interface not found method annotation like '@Save, @Update etc...'");
+        throw new AnnotationNotFoundException("in MtDao proxy interface not found method annotation like '@Save, @Update etc...'");
     }
 }

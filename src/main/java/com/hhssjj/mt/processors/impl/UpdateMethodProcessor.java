@@ -1,8 +1,9 @@
-package com.hhssjj.mt.processors;
+package com.hhssjj.mt.processors.impl;
 
 import com.hhssjj.mt.annotations.db.Update;
-import com.hhssjj.mt.mapping.EntityMapping;
-import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
+import com.hhssjj.mt.mapping.EntityScanner;
+import com.hhssjj.mt.processors.BaseMethodProcessor;
+import com.hhssjj.mt.support.jdbcTemplate.MyPreparedStatementCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.sql.UpdateSqlCreator;
 import com.hhssjj.mt.support.Null;
@@ -27,7 +28,7 @@ public class UpdateMethodProcessor extends BaseMethodProcessor<Update> {
         sqlCreator.setParameter(parameters[0]);
         sqlCreator.setParameters(parameters);
         sqlCreator.setParameterAnnotations(parameterAnnotations);
-        sqlCreator.setEntityMapping(new EntityMapping(parameters[0], SqlType.UPDATE));
+        sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.UPDATE));
 
         MyPreparedStatementCreator myPreparedStatementCreator;
         SqlCreateType sqlCreateType;

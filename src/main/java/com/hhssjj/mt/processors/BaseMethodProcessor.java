@@ -1,12 +1,9 @@
 package com.hhssjj.mt.processors;
 
-import com.hhssjj.mt.processors.creator.MyPreparedStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by 胡胜钧 on 8/4 0004.

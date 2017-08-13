@@ -1,13 +1,9 @@
-package com.hhssjj.mt.support.idStrategy;
+package com.hhssjj.mt.support.id;
 
 import com.hhssjj.mt.utils.SqlUtils;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
 
 /**
  * Created by hushengjun on 2017/8/11.

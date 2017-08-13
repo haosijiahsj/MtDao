@@ -1,6 +1,7 @@
-package com.hhssjj.mt.processors;
+package com.hhssjj.mt.processors.impl;
 
 import com.hhssjj.mt.annotations.db.BatchSave;
+import com.hhssjj.mt.processors.BaseMethodProcessor;
 import com.hhssjj.mt.sql.InsertSqlCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 

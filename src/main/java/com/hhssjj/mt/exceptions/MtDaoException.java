@@ -5,8 +5,16 @@ package com.hhssjj.mt.exceptions;
  */
 public class MtDaoException extends RuntimeException {
 
+    public MtDaoException() {
+        super();
+    }
+
     public MtDaoException(String message) {
         super(message);
+    }
+
+    public MtDaoException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

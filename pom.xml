@@ -8,7 +8,7 @@
     <artifactId>MtDao</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>A custom project using myfaces</name>
+    <name>MT</name>
     <url>http://www.myorganization.org</url>
 
     <build>

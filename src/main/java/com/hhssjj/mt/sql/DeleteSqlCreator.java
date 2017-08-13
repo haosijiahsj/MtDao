@@ -1,6 +1,5 @@
 package com.hhssjj.mt.sql;
 
-import com.hhssjj.mt.annotations.db.Delete;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -24,12 +23,12 @@ public class DeleteSqlCreator extends SqlCreator {
     public String createSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
 
-        Object id = entityMapping.getIdValue();
-        String tableName = entityMapping.getTableName();
+        Object id = entityScanner.getIdValue();
+        String tableName = entityScanner.getTableName();
         deleteBuilder.append("`")
                 .append(tableName)
                 .append("` WHERE `")
-                .append(entityMapping.getIdColumnName())
+                .append(entityScanner.getIdColumnName())
                 .append("` = ")
                 .append(id);
 
@@ -52,16 +51,16 @@ public class DeleteSqlCreator extends SqlCreator {
     public String createPreparedSql() {
         StringBuilder deleteBuilder = new StringBuilder("DELETE FROM ");
 
-        String tableName = entityMapping.getTableName();
+        String tableName = entityScanner.getTableName();
         deleteBuilder.append("`")
                 .append(tableName)
                 .append("` WHERE `")
-                .append(entityMapping.getIdColumnName())
+                .append(entityScanner.getIdColumnName())
                 .append("` = ?");
 
         // 必须重新初始化
         valueMap = new HashMap<>();
-        valueMap.put(1, entityMapping.getIdValue());
+        valueMap.put(1, entityScanner.getIdValue());
         logger.info("sql statement:" + deleteBuilder.toString());
         return deleteBuilder.toString();
     }

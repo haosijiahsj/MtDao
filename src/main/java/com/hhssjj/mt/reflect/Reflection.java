@@ -67,6 +67,36 @@ public class Reflection {
     }
 
     /**
+     * 直接设置字段的值
+     * @param o
+     * @param value
+     * @param field
+     */
+    public static void set(Object o, Object value, Field field) {
+        field.setAccessible(true);
+        try {
+            field.set(o, value);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    /**
+     * 直接获取字段的值
+     * @param o
+     * @param field
+     * @return
+     */
+    public static Object get(Object o, Field field) {
+        field.setAccessible(true);
+        try {
+            return field.get(o);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    /**
      * 通过方法名称执行方法
      * @param object
      * @param methodName

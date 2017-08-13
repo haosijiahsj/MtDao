@@ -1,6 +1,6 @@
 package com.hhssjj.mt.sql;
 
-import com.hhssjj.mt.mapping.EntityMapping;
+import com.hhssjj.mt.mapping.EntityScanner;
 import org.apache.log4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -13,7 +13,7 @@ public abstract class SqlCreator {
 
     private Logger logger = Logger.getLogger(SqlCreator.class);
 
-    protected EntityMapping entityMapping;
+    protected EntityScanner entityScanner;
 
     // 存储预处理语句索引和值
     protected Map<Integer, Object> valueMap;
@@ -57,8 +57,8 @@ public abstract class SqlCreator {
         this.parameters = parameters;
     }
 
-    public void setEntityMapping(EntityMapping entityMapping) {
-        this.entityMapping = entityMapping;
+    public void setEntityScanner(EntityScanner entityScanner) {
+        this.entityScanner = entityScanner;
     }
 
     public void setParameterAnnotations(Annotation[][] parameterAnnotations) {

@@ -2,29 +2,109 @@ package com.hhssjj.mt.mapping;
 
 import com.hhssjj.mt.reflect.Reflection;
 import com.hhssjj.mt.support.SqlType;
-import com.hhssjj.mt.support.idStrategy.AutoCreateIdValue;
+import com.hhssjj.mt.support.id.AutoCreateIdValue;
 import com.hhssjj.mt.utils.Preconditions;
 
 import javax.persistence.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Created by hushengjun on 2017/8/11.
  */
-public class EntityMapping {
+public class EntityScanner {
     private Object object;
     private SqlType sqlType;
 
-    public EntityMapping(Object object) {
+    public EntityScanner(Object object) {
         this.object = object;
     }
 
-    public EntityMapping(Object object, SqlType sqlType) {
+    public EntityScanner(Object object, SqlType sqlType) {
         this.object = object;
         this.sqlType = sqlType;
+    }
+
+    /**
+     * 扫描实体类，获取其中的所有属性
+     * @return
+     */
+    public PersistentEntity scanEntityByField() {
+        PersistentEntity persistentEntity = new PersistentEntity();
+        List<PersistentProperty> propertyList = new ArrayList<>();
+
+        Class<?> clazz = object.getClass();
+        String entityName = clazz.getName();
+        String tableName = entityName;
+        Annotation[] entityAnnos = clazz.getAnnotations();
+        Entity entity = clazz.getAnnotation(Entity.class);
+        Preconditions.checkNotNull(entity,
+                object + " is not a database entity, maybe you should add annotation '@Entity'");
+
+        Table table = clazz.getAnnotation(Table.class);
+        if (table != null && !"".equals(table.name())) tableName = table.name();
+
+        Field[] fields = Reflection.getDeclaredFields(object);
+        for (Field field : fields) {
+            PersistentProperty persistentProperty = new PersistentProperty();
+            Annotation[] annotations = field.getAnnotations();
+
+            Column columnAnno = field.getAnnotation(Column.class);
+
+            String fieldName = field.getName();
+            Class<?> fieldType = field.getType();
+
+            String columnName = fieldName;
+            if (columnAnno != null) columnName = columnAnno.name();
+
+            Object value = Reflection.get(object, field);
+
+            persistentProperty.setFieldName(fieldName)
+                    .setAnnotations(annotations)
+                    .setColumnName(columnName)
+                    .setFieldType(fieldType)
+                    .setValue(value);
+
+            propertyList.add(persistentProperty);
+        }
+
+        persistentEntity.setEntityName(entityName)
+                .setTableName(tableName)
+                .setEntityAnnotation(entityAnnos)
+                .setPropertyList(propertyList);
+
+        return persistentEntity;
+    }
+
+    public List<PersistentProperty> scanEntityByMethod() {
+        List<PersistentProperty> propertyList = new ArrayList<>();
+
+        Method[] methods = Reflection.getDeclaredMethods(object);
+        for (Method method : methods) {
+            PersistentProperty persistentProperty = new PersistentProperty();
+            Annotation[] annotations = method.getAnnotations();
+
+            Column columnAnno = method.getAnnotation(Column.class);
+            // 没有Column注解直接跳过
+            if (columnAnno == null) continue;
+
+            String columnName = columnAnno.name();
+            String methodName = method.getName();
+            Class<?> fieldType = method.getReturnType();
+
+            Object value = Reflection.invoke(object, methodName);
+
+            persistentProperty.setAnnotations(annotations)
+                    .setFieldType(fieldType)
+                    .setColumnName(columnName)
+                    .setValue(value);
+
+            propertyList.add(persistentProperty);
+        }
+
+        return propertyList;
     }
 
     /**
