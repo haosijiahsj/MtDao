@@ -1,6 +1,8 @@
-package com.hhssjj.mt.sql;
+package com.hhssjj.mt.sql.impl;
 
 import com.hhssjj.mt.reflect.Reflection;
+import com.hhssjj.mt.sql.SingleParameterSqlCreator;
+import com.hhssjj.mt.sql.SqlCreator;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
@@ -14,18 +16,16 @@ import java.util.Map;
 /**
  * Created by 胡胜钧 on 8/5 0005.
  */
-public class InsertSqlCreator extends SqlCreator {
+public class InsertSqlCreator extends SingleParameterSqlCreator {
 
     private Logger logger = Logger.getLogger(InsertSqlCreator.class);
     private String sql;
-    private String tableName;
     private Class<?> entityClass;
 
     public InsertSqlCreator() {}
 
-    public InsertSqlCreator(String sql, String tableName, Class<?> entityClass) {
+    public InsertSqlCreator(String sql, Class<?> entityClass) {
         this.sql = sql;
-        this.tableName = tableName;
         this.entityClass = entityClass;
     }
 
@@ -149,8 +149,8 @@ public class InsertSqlCreator extends SqlCreator {
         StringBuilder valueBuilder = new StringBuilder("(");
 
         // 拼装表名
-        if ("".equals(this.tableName)) this.tableName = entityScanner.getTableName(entityClass);
-        sqlBuilder.append("`").append(this.tableName).append("`");
+        String tableName = entityScanner.getTableName(entityClass);
+        sqlBuilder.append("`").append(tableName).append("`");
 
         Map<String, Object> map = (Map<String, Object>) parameter;
         int i = 0;

@@ -4,9 +4,9 @@ import com.hhssjj.mt.annotations.db.SaveOrUpdate;
 import com.hhssjj.mt.mapping.EntityScanner;
 import com.hhssjj.mt.processors.BaseMethodProcessor;
 import com.hhssjj.mt.support.jdbcTemplate.MyPreparedStatementCreator;
-import com.hhssjj.mt.sql.InsertSqlCreator;
+import com.hhssjj.mt.sql.impl.InsertSqlCreator;
 import com.hhssjj.mt.sql.SqlCreator;
-import com.hhssjj.mt.sql.UpdateSqlCreator;
+import com.hhssjj.mt.sql.impl.UpdateSqlCreator;
 import com.hhssjj.mt.support.SqlCreateType;
 import com.hhssjj.mt.support.SqlType;
 

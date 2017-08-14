@@ -22,4 +22,6 @@ public interface JdbcOperations {
 
     List<Map<String, Object>> queryForList(String sql);
 
+    <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback);
+
 }

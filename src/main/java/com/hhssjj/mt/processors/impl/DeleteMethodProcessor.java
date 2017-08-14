@@ -4,7 +4,7 @@ import com.hhssjj.mt.annotations.db.Delete;
 import com.hhssjj.mt.mapping.EntityScanner;
 import com.hhssjj.mt.processors.BaseMethodProcessor;
 import com.hhssjj.mt.support.jdbcTemplate.MyPreparedStatementCreator;
-import com.hhssjj.mt.sql.DeleteSqlCreator;
+import com.hhssjj.mt.sql.impl.DeleteSqlCreator;
 import com.hhssjj.mt.sql.SqlCreator;
 import com.hhssjj.mt.support.SqlCreateType;
 import com.hhssjj.mt.support.SqlType;

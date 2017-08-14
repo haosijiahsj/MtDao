@@ -1,5 +1,6 @@
-package com.hhssjj.mt.sql;
+package com.hhssjj.mt.sql.impl;
 
+import com.hhssjj.mt.sql.SqlCreator;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;

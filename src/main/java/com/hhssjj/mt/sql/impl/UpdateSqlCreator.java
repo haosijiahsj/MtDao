@@ -1,7 +1,8 @@
-package com.hhssjj.mt.sql;
+package com.hhssjj.mt.sql.impl;
 
 import com.hhssjj.mt.annotations.db.IdColumn;
 import com.hhssjj.mt.reflect.Reflection;
+import com.hhssjj.mt.sql.SqlCreator;
 import org.apache.log4j.Logger;
 
 import javax.persistence.Column;
