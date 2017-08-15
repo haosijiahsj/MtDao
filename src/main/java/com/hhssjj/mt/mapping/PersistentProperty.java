@@ -1,6 +1,7 @@
 package com.hhssjj.mt.mapping;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 /**
  * Created by 胡胜钧 on 8/12 0012.
@@ -10,7 +11,7 @@ public class PersistentProperty {
     private String columnName;
     private Annotation[] annotations;
     private Class<?> fieldType;
-    private Object value;
+    private Field field;
 
     public String getFieldName() {
         return fieldName;
@@ -48,12 +49,11 @@ public class PersistentProperty {
         return this;
     }
 
-    public Object getValue() {
-        return value;
+    public Field getField() {
+        return field;
     }
 
-    public PersistentProperty setValue(Object value) {
-        this.value = value;
-        return this;
+    public void setField(Field field) {
+        this.field = field;
     }
 }

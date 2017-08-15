@@ -17,9 +17,14 @@ import java.util.*;
 public class EntityScanner {
     private Object object;
     private SqlType sqlType;
+    private Class<?> clazz;
 
     public EntityScanner(Object object) {
         this.object = object;
+    }
+
+    public EntityScanner(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
     public EntityScanner(Object object, SqlType sqlType) {
@@ -28,23 +33,11 @@ public class EntityScanner {
     }
 
     /**
-     * 扫描实体类，获取其中的所有属性
+     * 扫描实体类的字段，获取其中的所有属性
      * @return
      */
-    public PersistentEntity scanEntityByField() {
-        PersistentEntity persistentEntity = new PersistentEntity();
+    public List<PersistentProperty> scanField() {
         List<PersistentProperty> propertyList = new ArrayList<>();
-
-        Class<?> clazz = object.getClass();
-        String entityName = clazz.getName();
-        String tableName = entityName;
-        Annotation[] entityAnnos = clazz.getAnnotations();
-        Entity entity = clazz.getAnnotation(Entity.class);
-        Preconditions.checkNotNull(entity,
-                object + " is not a database entity, maybe you should add annotation '@Entity'");
-
-        Table table = clazz.getAnnotation(Table.class);
-        if (table != null && !"".equals(table.name())) tableName = table.name();
 
         Field[] fields = Reflection.getDeclaredFields(object);
         for (Field field : fields) {
@@ -59,26 +52,22 @@ public class EntityScanner {
             String columnName = fieldName;
             if (columnAnno != null) columnName = columnAnno.name();
 
-            Object value = Reflection.get(object, field);
-
             persistentProperty.setFieldName(fieldName)
                     .setAnnotations(annotations)
                     .setColumnName(columnName)
-                    .setFieldType(fieldType)
-                    .setValue(value);
+                    .setFieldType(fieldType);
 
             propertyList.add(persistentProperty);
         }
 
-        persistentEntity.setEntityName(entityName)
-                .setTableName(tableName)
-                .setEntityAnnotation(entityAnnos)
-                .setPropertyList(propertyList);
-
-        return persistentEntity;
+        return propertyList;
     }
 
-    public List<PersistentProperty> scanEntityByMethod() {
+    /**
+     * 扫描实体类中的方法
+     * @return
+     */
+    public List<PersistentProperty> scanMethod() {
         List<PersistentProperty> propertyList = new ArrayList<>();
 
         Method[] methods = Reflection.getDeclaredMethods(object);
@@ -91,20 +80,50 @@ public class EntityScanner {
             if (columnAnno == null) continue;
 
             String columnName = columnAnno.name();
-            String methodName = method.getName();
             Class<?> fieldType = method.getReturnType();
-
-            Object value = Reflection.invoke(object, methodName);
 
             persistentProperty.setAnnotations(annotations)
                     .setFieldType(fieldType)
-                    .setColumnName(columnName)
-                    .setValue(value);
+                    .setColumnName(columnName);
 
             propertyList.add(persistentProperty);
         }
 
         return propertyList;
+    }
+
+    /**
+     * 扫描实体类头部就是类名那一堆东西
+     * @return
+     */
+    public PersistentEntity scanEntityTitle() {
+        PersistentEntity persistentEntity = new PersistentEntity();
+
+        String entityName = this.clazz.getName();
+        String tableName = entityName;
+        Annotation[] entityAnnos = this.clazz.getAnnotations();
+        Entity entity = this.clazz.getAnnotation(Entity.class);
+        Preconditions.checkNotNull(entity,
+                this.clazz + " is not a database entity, maybe you should add annotation '@Entity'");
+
+        Table table = this.clazz.getAnnotation(Table.class);
+        if (table != null && !"".equals(table.name())) tableName = table.name();
+
+        persistentEntity.setEntityName(entityName)
+                .setTableName(tableName)
+                .setEntityAnnotation(entityAnnos);
+
+        return persistentEntity;
+    }
+
+    /**
+     * 获取组装的整个映射对象
+     * @return
+     */
+    public PersistentEntity getPersistentEntity() {
+        PersistentEntity persistentEntity = this.scanEntityTitle();
+        persistentEntity.setPropertyList(this.scanField());
+        return persistentEntity;
     }
 
     /**

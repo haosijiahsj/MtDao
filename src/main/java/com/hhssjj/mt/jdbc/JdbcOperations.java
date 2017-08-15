@@ -24,4 +24,16 @@ public interface JdbcOperations {
 
     <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback);
 
+    /**
+     * 使用可变参数
+     * @param sql
+     * @param parameters
+     * @return
+     */
+    int update(String sql, Object...parameters);
+
+    <T> T queryForObject(String sql, Class<T> clazz, Object...parameters);
+
+    <T> List<T> queryForList(String sql, Class<T> clazz, Object...parameters);
+
 }
