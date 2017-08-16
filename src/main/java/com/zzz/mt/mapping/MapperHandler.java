@@ -1,5 +1,6 @@
 package com.zzz.mt.mapping;
 
+import com.google.common.collect.Lists;
 import com.zzz.mt.reflect.Reflection;
 import com.zzz.mt.support.SqlType;
 import com.zzz.mt.support.id.AutoCreateIdValue;
@@ -13,21 +14,21 @@ import java.util.List;
 /**
  * Created by hushengjun on 2017/8/15.
  */
-public class EntityMapper {
+public class MapperHandler {
 
     private Object object;
     private SqlType sqlType;
 
     private PersistentEntity persistentEntity;
 
-    public EntityMapper(Object object, SqlType sqlType) {
+    public MapperHandler(Object object, SqlType sqlType) {
         this.object = object;
         this.sqlType = sqlType;
         // 在此加缓存
         this.persistentEntity = new EntityScanner(object.getClass()).getPersistentEntity();
     }
 
-    public EntityMapper(Class<?> clazz) {
+    public MapperHandler(Class<?> clazz) {
         this.persistentEntity = new EntityScanner(clazz).getPersistentEntity();
     }
 
@@ -37,8 +38,7 @@ public class EntityMapper {
      */
     private List<MapperColumnResult> handlePersistentEntityForValue() {
         List<PersistentProperty> propertyList = this.persistentEntity.getPropertyList();
-        List<MapperColumnResult> mapperColumnResultList = new ArrayList<>();
-        int i = 0;
+        List<MapperColumnResult> mapperColumnResultList = Lists.newArrayList();
         label : for (PersistentProperty prop : propertyList) {
             MapperColumnResult mapperColumnResult = new MapperColumnResult();
 
@@ -56,18 +56,23 @@ public class EntityMapper {
                     mapperColumnResult.setId(true);
                 } else if (Column.class.equals(annoType)) {
                     Column column = (Column) anno;
-                    // 获取字段名称
-                    if (!column.nullable() && value == null) throw new IllegalArgumentException(column.name() + "can not be null");
+                    // 字段中设置了不插入，则跳过
                     if (SqlType.INSERT.equals(this.sqlType) && !column.insertable()) continue label;
+                    // 字段中设置了不更新，则跳过
                     if (SqlType.UPDATE.equals(this.sqlType) && !column.updatable()) continue label;
+                    // 字段中设置不可为空且值为空时，抛出异常
+                    if (!column.nullable() && value == null) throw new IllegalArgumentException(column.name() + "can not be null");
+                    // 更新语句中为空的字段跳过
+                    if (SqlType.UPDATE.equals(this.sqlType) && value == null) continue label;
                     columnName = column.name();
                 } else if (GeneratedValue.class.equals(annoType)) {
                     GeneratedValue generatedValue = (GeneratedValue) anno;
-                    // 获取id生成的值
-                    AutoCreateIdValue idValue = new AutoCreateIdValue(generatedValue);
-                    value = idValue.createId();
                     // 如果是为了生成插入类型的语句，且通过id策略获取的值为null时，跳过
-                    if (SqlType.INSERT.equals(sqlType) && value == null) continue label;
+                    if (SqlType.INSERT.equals(sqlType)) {
+                        AutoCreateIdValue idValue = new AutoCreateIdValue(generatedValue);
+                        value = idValue.createId();
+                        if (value == null) continue label;
+                    }
                 } else if (Enumerated.class.equals(annoType)) {
                     Enumerated enumerated = (Enumerated) anno;
                     // 如果是枚举类型，则重新赋值
@@ -85,7 +90,6 @@ public class EntityMapper {
                 } else if (JoinColumn.class.equals(annoType)) {}
             }
 
-            mapperColumnResult.setIndex(++i);
             mapperColumnResult.setColumnName(columnName);
             mapperColumnResult.setValue(value);
 

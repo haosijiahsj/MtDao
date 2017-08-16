@@ -3,7 +3,7 @@ package com.zzz.mt;
 import com.zzz.mt.annotations.MtDao;
 import com.zzz.mt.dao.MtDaoSave;
 import com.zzz.mt.entity.User;
-import com.zzz.mt.mapping.EntityMapper;
+import com.zzz.mt.mapping.MapperHandler;
 import com.zzz.mt.mapping.MapperResult;
 import com.zzz.mt.support.SqlType;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class MtDaoSaveTest extends MtDaoBaseTest {
         user.setSqlType(SqlType.INSERT);
         user.setUpdateTime(new java.sql.Date(new Date().getTime()));
 
-        MapperResult mapperResult = new EntityMapper(user, SqlType.INSERT).getMapperResult();
+        MapperResult mapperResult = new MapperHandler(user, SqlType.INSERT).getMapperResult();
     }
 
 }

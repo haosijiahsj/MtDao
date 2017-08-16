@@ -8,7 +8,6 @@ public class MapperColumnResult {
     private String columnName;
     private Object value;
     private boolean isId = false;
-    private int index;
 
     public String getColumnName() {
         return columnName;
@@ -34,11 +33,4 @@ public class MapperColumnResult {
         isId = id;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 }

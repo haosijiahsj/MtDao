@@ -133,7 +133,7 @@ public class EntityScanner {
         Entity entity = clazz.getAnnotation(Entity.class);
 
         Preconditions.checkNotNull(entity,
-                object + " is not a database entity, maybe you should add annotation '@Entity'");
+                "'" + object + "' is not a database entity, maybe you should add annotation '@Entity'");
 
         Table table = clazz.getAnnotation(Table.class);
         if (table != null && !"".equals(table.name())) tableName = table.name();

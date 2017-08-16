@@ -32,9 +32,8 @@ public class User {
     private String testTransient;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sqlType")
+    @Column(name = "sql_type")
     private SqlType sqlType;
-
 
     @Column(name = "ts")
     private java.sql.Date updateTime;
