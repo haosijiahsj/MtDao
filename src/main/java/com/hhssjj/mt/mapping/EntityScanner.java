@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class EntityScanner {
     private Object object;
-    private SqlType sqlType;
+    private SqlType sqlType = SqlType.INSERT;
     private Class<?> clazz;
 
     public EntityScanner(Object object) {
@@ -39,7 +39,7 @@ public class EntityScanner {
     public List<PersistentProperty> scanField() {
         List<PersistentProperty> propertyList = new ArrayList<>();
 
-        Field[] fields = Reflection.getDeclaredFields(object);
+        Field[] fields = Reflection.getDeclaredFields(this.clazz);
         for (Field field : fields) {
             PersistentProperty persistentProperty = new PersistentProperty();
             Annotation[] annotations = field.getAnnotations();
@@ -55,7 +55,8 @@ public class EntityScanner {
             persistentProperty.setFieldName(fieldName)
                     .setAnnotations(annotations)
                     .setColumnName(columnName)
-                    .setFieldType(fieldType);
+                    .setFieldType(fieldType)
+                    .setField(field);
 
             propertyList.add(persistentProperty);
         }
@@ -70,7 +71,7 @@ public class EntityScanner {
     public List<PersistentProperty> scanMethod() {
         List<PersistentProperty> propertyList = new ArrayList<>();
 
-        Method[] methods = Reflection.getDeclaredMethods(object);
+        Method[] methods = Reflection.getDeclaredMethods(clazz);
         for (Method method : methods) {
             PersistentProperty persistentProperty = new PersistentProperty();
             Annotation[] annotations = method.getAnnotations();

@@ -1,5 +1,6 @@
 package com.hhssjj.mt.support.id;
 
+import com.hhssjj.mt.support.DataBaseType;
 import com.hhssjj.mt.utils.SqlUtils;
 
 import javax.persistence.GeneratedValue;
@@ -28,20 +29,20 @@ public class AutoCreateIdValue {
                 idValue = null;
             } else if (GenerationType.AUTO.equals(generationType)) {
                 // 自动判断数据库类型，然后使用不同的主键生成策略
-                if (!SqlUtils.isCurDatabaseType("mysql")) {
-                    throw new IllegalStateException("sorry! at present MtDao can't support "
-                            + generationType + " id generate strategy");
+                if (!SqlUtils.isCurDatabaseType(DataBaseType.MYSQL)) {
+                    throw new IllegalStateException("sorry! at present MtDao can't support '"
+                            + generationType.name()+ "' id generate strategy");
                 } else {
                     idValue = 10000000;
                 }
             } else if (GenerationType.SEQUENCE.equals(generationType)) {
                 // Oracle数据库的主键生成策略
-                throw new IllegalStateException("sorry! at present MtDao can't support "
-                        + generationType + " id generate strategy");
+                throw new IllegalStateException("sorry! at present MtDao can't support '"
+                        + generationType.name() + "' id generate strategy");
             } else {
                 // 这个需要维护一张表
-                throw new IllegalStateException("sorry! at present MtDao can't support "
-                        + generationType + " id generate strategy");
+                throw new IllegalStateException("sorry! at present MtDao can't support '"
+                        + generationType.name() + "' id generate strategy");
             }
         }
         return idValue;

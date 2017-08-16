@@ -1,5 +1,7 @@
 package com.hhssjj.mt.entity;
 
+import com.hhssjj.mt.support.SqlType;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -12,23 +14,34 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
     private String name;
 
+    @Column(name = "sex")
     private Boolean sex;
 
     @Column(name = "age")
     private Integer age;
 
     @Column(name = "address")
-
     private String address;
+
+    @Transient
+    private String testTransient;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sqlType")
+    private SqlType sqlType;
 
 
     @Column(name = "ts")
     private java.sql.Date updateTime;
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -78,4 +91,19 @@ public class User {
         this.sex = sex;
     }
 
+    public String getTestTransient() {
+        return testTransient;
+    }
+
+    public void setTestTransient(String testTransient) {
+        this.testTransient = testTransient;
+    }
+
+    public SqlType getSqlType() {
+        return sqlType;
+    }
+
+    public void setSqlType(SqlType sqlType) {
+        this.sqlType = sqlType;
+    }
 }

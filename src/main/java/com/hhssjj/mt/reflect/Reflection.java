@@ -57,6 +57,10 @@ public class Reflection {
         return object.getClass().getDeclaredFields();
     }
 
+    public static Field[] getDeclaredFields(Class<?> clazz) {
+        return clazz.getDeclaredFields();
+    }
+
     /**
      * 返回该类自己定义的方法
      * @param object
@@ -64,6 +68,10 @@ public class Reflection {
      */
     public static Method[] getDeclaredMethods(Object object) {
         return object.getClass().getDeclaredMethods();
+    }
+
+    public static Method[] getDeclaredMethods(Class<?> clazz) {
+        return clazz.getDeclaredMethods();
     }
 
     /**

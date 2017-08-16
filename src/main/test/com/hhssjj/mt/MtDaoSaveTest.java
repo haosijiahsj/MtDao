@@ -3,6 +3,9 @@ package com.hhssjj.mt;
 import com.hhssjj.mt.annotations.MtDao;
 import com.hhssjj.mt.dao.MtDaoSave;
 import com.hhssjj.mt.entity.User;
+import com.hhssjj.mt.mapping.EntityMapper;
+import com.hhssjj.mt.mapping.MapperResult;
+import com.hhssjj.mt.support.SqlType;
 import org.junit.Test;
 
 import java.sql.Timestamp;
@@ -51,6 +54,20 @@ public class MtDaoSaveTest extends MtDaoBaseTest {
         map.put("age", 12);
         int n = dao.saveFromMapWithEntityClass(map);
         System.out.println("返回的值为：" + n);
+    }
+
+    @Test
+    public void testScanner() {
+        User user = new User();
+        user.setName("胡胜钧123");
+        user.setAge(22);
+        user.setSex(true);
+        user.setAddress("成都市123");
+        user.setTestTransient("testTransient");
+        user.setSqlType(SqlType.INSERT);
+        user.setUpdateTime(new java.sql.Date(new Date().getTime()));
+
+        MapperResult mapperResult = new EntityMapper(user).getMapperResult();
     }
 
 }

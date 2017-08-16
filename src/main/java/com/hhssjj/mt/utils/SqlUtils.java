@@ -1,5 +1,7 @@
 package com.hhssjj.mt.utils;
 
+import com.hhssjj.mt.support.DataBaseType;
+
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
@@ -11,15 +13,15 @@ public class SqlUtils {
 
     /**
      * 判断是否是传入的数据库类型
-     * @param name
+     * @param dataBaseType
      * @return
      */
-    public static boolean isCurDatabaseType(String name) {
+    public static boolean isCurDatabaseType(DataBaseType dataBaseType) {
         Enumeration<Driver> driverNames = DriverManager.getDrivers();
         while (driverNames.hasMoreElements()) {
             Driver driver = driverNames.nextElement();
             String driverName = driver.getClass().getName();
-            if (driverName.toLowerCase().contains(name)) return true;
+            if (driverName.toLowerCase().contains(dataBaseType.name().toLowerCase())) return true;
         }
         return false;
     }

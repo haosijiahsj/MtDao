@@ -3,11 +3,11 @@ package com.hhssjj.mt.mapping;
 /**
  * Created by hushengjun on 2017/8/15.
  */
-public class MapperForUpdate {
+public class MapperColumnResult {
 
     private String columnName;
     private Object value;
-    private boolean isId;
+    private boolean isId = false;
     private int index;
 
     public String getColumnName() {
