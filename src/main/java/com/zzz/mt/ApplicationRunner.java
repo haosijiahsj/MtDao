@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ImportResource;
  * Created by 胡胜钧 on 8/5 0005.
  */
 
-@ComponentScan("com.hhssjj")
+@ComponentScan("com.zzz")
 @ImportResource({"classpath:applicationContext.xml"})
 @SpringBootApplication
 public class ApplicationRunner implements EmbeddedServletContainerCustomizer {
