@@ -18,9 +18,7 @@ public class DeleteMethodProcessor extends BaseMethodProcessor<Delete> {
         String userSql = methodAnnotation.value();
 
         SqlCreator sqlCreator = new DeleteSqlCreator(userSql);
-        sqlCreator.setParameter(parameters[0]);
         sqlCreator.setParameters(parameters);
-        sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.DELETE));
 
         MyPreparedStatementCreator myPreparedStatementCreator;
         if (!"".equals(userSql)) {

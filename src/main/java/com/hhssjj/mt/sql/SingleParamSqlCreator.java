@@ -3,7 +3,7 @@ package com.hhssjj.mt.sql;
 /**
  * Created by hushengjun on 2017/8/14.
  */
-public abstract class SingleParameterSqlCreator extends SqlCreator {
+public abstract class SingleParamSqlCreator extends SqlCreator {
     protected Object parameter;
 
     @Override

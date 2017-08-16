@@ -17,7 +17,6 @@ public class BatchSaveMethodProcessor extends BaseMethodProcessor<BatchSave> {
         List<Object> list = (List<Object>) parameters[0];
         Object object = list.get(0);
 
-        sqlCreator.setParameter(object);
         sqlCreator.setParameters(parameters);
         jdbcTemplate.batchUpdate();
         return null;

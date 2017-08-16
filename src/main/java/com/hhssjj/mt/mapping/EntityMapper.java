@@ -69,8 +69,10 @@ public class EntityMapper {
                 } else if (Enumerated.class.equals(annoType)) {
                     Enumerated enumerated = (Enumerated) anno;
                     // 如果是枚举类型，则重新赋值
-                    Enum enumValue = (Enum) value;
-                    value = EnumType.STRING.equals(enumerated.value()) ? enumValue.name() : enumValue.ordinal();
+                    if (value != null) {
+                        Enum enumValue = (Enum) value;
+                        value = EnumType.STRING.equals(enumerated.value()) ? enumValue.name() : enumValue.ordinal();
+                    }
                 } else if (Transient.class.equals(annoType)) {
                     // 如果有该注解，则直接跳到最外层循环
                     continue label;

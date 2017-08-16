@@ -25,10 +25,8 @@ public class UpdateMethodProcessor extends BaseMethodProcessor<Update> {
                 "You can't set parameter 'value' and 'tableName' at the same time, choose one of them");
 
         SqlCreator sqlCreator = new UpdateSqlCreator(userSql, tableName, entityClass);
-        sqlCreator.setParameter(parameters[0]);
         sqlCreator.setParameters(parameters);
         sqlCreator.setParameterAnnotations(parameterAnnotations);
-        sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.UPDATE));
 
         MyPreparedStatementCreator myPreparedStatementCreator;
         SqlCreateType sqlCreateType;

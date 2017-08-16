@@ -22,15 +22,10 @@ public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdat
         SqlCreator sqlCreator;
         if (idValue == null) {
             sqlCreator = new InsertSqlCreator();
-            sqlCreator.setParameter(parameters[0]);
             sqlCreator.setParameters(parameters);
-            sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.INSERT));
-
         } else {
             sqlCreator = new UpdateSqlCreator();
-            sqlCreator.setParameter(parameters[0]);
             sqlCreator.setParameters(parameters);
-            sqlCreator.setEntityScanner(new EntityScanner(parameters[0], SqlType.UPDATE));
         }
 
         MyPreparedStatementCreator myPreparedStatementCreator =

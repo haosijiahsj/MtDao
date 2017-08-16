@@ -26,6 +26,7 @@ public class MtDaoSaveTest extends MtDaoBaseTest {
         user.setSex(true);
         user.setAddress("成都市123");
         user.setUpdateTime(new java.sql.Date(new Date().getTime()));
+        user.setSqlType(SqlType.INSERT);
         int n = dao.saveFromEntity(user);
         System.out.println("返回的值为：" + n);
     }
