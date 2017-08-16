@@ -1,4 +1,4 @@
-package com.hhssjj.mt.jdbc.datasource;
+package com.hhssjj.mt.datasource;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
