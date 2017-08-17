@@ -8,32 +8,26 @@ import java.util.Map;
  */
 public interface JdbcOperations {
 
+    <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback);
+
     int update(String sql);
 
-    int update(PreparedStatementCreator preparedStatementCreator);
-
-    <T> T queryForObject(String sql, RowMapper<T> rowMapper);
-
-    <T> T queryForObject(String sql, PreparedStatementSetter pss, RowMapper<T> rowMapper);
+    int update(String psql, Object...parameters);
 
     Map<String, Object> queryForMap(String sql);
 
-    <T> List<T> queryForList(String sql, RowMapper<T> rowMapper);
+    Map<String, Object> queryForMap(String psql, Object...parameters);
 
     List<Map<String, Object>> queryForList(String sql);
 
-    <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback);
+    List<Map<String, Object>> queryForList(String psql, Object...parameters);
 
-    /**
-     * 使用可变参数
-     * @param sql
-     * @param parameters
-     * @return
-     */
-    int update(String sql, Object...parameters);
+    <T> T queryForObject(Class<T> clazz, String sql);
 
-    <T> T queryForObject(String sql, Class<T> clazz, Object...parameters);
+    <T> T queryForObject(Class<T> clazz, String psql, Object... parameters);
 
-    <T> List<T> queryForList(String sql, Class<T> clazz, Object...parameters);
+    <T> List<T> queryForList(Class<T> clazz, String sql);
+
+    <T> List<T> queryForList(Class<T> clazz, String psql, Object... parameters);
 
 }

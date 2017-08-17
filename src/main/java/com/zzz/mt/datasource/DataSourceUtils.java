@@ -13,8 +13,19 @@ public class DataSourceUtils {
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {
-            return null;
+            throw new IllegalStateException("can't get a jdbc connection, " + e.getMessage());
         }
     }
+
+    public static void releaseConnection(Connection connection) {
+        if (connection == null) return;
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private DataSourceUtils() {}
 
 }
