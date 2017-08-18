@@ -1,13 +1,8 @@
 package com.zzz.mt.jdbc;
 
 import com.zzz.mt.datasource.DataSourceUtils;
-import com.zzz.mt.exceptions.MtDaoException;
-import com.zzz.mt.mapping.EntityScanner;
-import com.zzz.mt.mapping.PersistentEntity;
-import com.zzz.mt.mapping.PersistentProperty;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,23 +12,18 @@ import java.util.Map;
 /**
  * Created by 胡胜钧 on 8/13 0013.
  */
-public class JdbcTemplate implements JdbcOperations {
+public class JdbcOperationsImpl implements JdbcOperations {
 
     private DataSource dataSource;
 
-    public JdbcTemplate(DataSource dataSource) {
+    public JdbcOperationsImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public JdbcTemplate() {
+    public JdbcOperationsImpl() {
         // 通过直接获取spring的bean来获取dataSource
     }
 
-
-    @Override
-    public <T> T execute(PreparedStatementCreator psc, PreparedStatementCallback<T> callback) {
-        return null;
-    }
 
     @Override
     public int update(String sql) {
@@ -47,14 +37,24 @@ public class JdbcTemplate implements JdbcOperations {
 
     @Override
     public int update(String psql, Object... parameters) {
-        Connection connection = DataSourceUtils.getConnection(dataSource);
-        try (PreparedStatement pstatement = connection.prepareStatement(psql)) {
+        try (Connection connection = DataSourceUtils.getConnection(dataSource);
+             PreparedStatement pstatement = connection.prepareStatement(psql)) {
 
             int i = 0;
             for (Object parameter : parameters) {
                 pstatement.setObject(++i, parameter);
             }
 
+            return pstatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public int update(PreparedStatementCreator creator) {
+        try (Connection connection = DataSourceUtils.getConnection(dataSource)) {
+            PreparedStatement pstatement = creator.createPreparedStatement(connection);
             return pstatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException();
@@ -130,7 +130,7 @@ public class JdbcTemplate implements JdbcOperations {
 
     @Override
     public <T> T queryForObject(Class<T> clazz, String psql, Object... parameters) {
-        return null;
+        return queryForList(clazz, psql, parameters).get(0);
     }
 
     @Override
@@ -144,40 +144,73 @@ public class JdbcTemplate implements JdbcOperations {
         Connection connection = DataSourceUtils.getConnection(dataSource);
         try (PreparedStatement pstatement = connection.prepareStatement(psql)) {
 
+            List<T> objects = new ArrayList<>();
             int i = 0;
             for (Object parameter : parameters) {
                 pstatement.setObject(++i, parameter);
             }
 
             ResultSet rs = pstatement.executeQuery();
-            ResultSetMetaData md = rs.getMetaData();
-
-            List<T> objects = new ArrayList<>();
-            Map<String, Field> map = this.getMap(clazz);
             while (rs.next()) {
-                T object = clazz.newInstance();
-                for (int j = 0; j < md.getColumnCount(); j++) {
-                    String dbColumnName = md.getColumnName(j);
-                    Object value = rs.getObject(dbColumnName);
-                    Field field = map.get(dbColumnName);
-                }
-                objects.add(object);
+                T value = (T) rs.getObject(1);
+                objects.add(value);
             }
-
             return objects;
-        } catch (SQLException | ReflectiveOperationException e) {
+        } catch (SQLException e) {
             throw new RuntimeException();
         }
     }
 
-    private Map<String, Field> getMap(Class<?> clazz) {
-        Map<String, Field> map = new HashMap<>();
-        PersistentEntity entity = new EntityScanner(clazz).getPersistentEntity();
-        List<PersistentProperty> propertyList = entity.getPropertyList();
-        for (PersistentProperty prop : propertyList) {
-            map.put(prop.getColumnName(), prop.getField());
-        }
-        return map;
+    @Override
+    public <T> T queryForObject(String sql, RowMapper<T> rowMapper) {
+        return queryForList(sql, rowMapper).get(0);
     }
+
+    @Override
+    public <T> T queryForObject(String psql, RowMapper<T> rowMapper, Object... parameters) {
+        return queryForList(psql, rowMapper, parameters).get(0);
+    }
+
+    @Override
+    public <T> List<T> queryForList(String sql, RowMapper<T> rowMapper) {
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        try (Statement statement = connection.createStatement()) {
+            List<T> list = new ArrayList<>();
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                T t =rowMapper.rowMapping(rs, rs.getMetaData().getColumnCount());
+                list.add(t);
+            }
+
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public <T> List<T> queryForList(String psql, RowMapper<T> rowMapper, Object... parameters) {
+        Connection connection = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement pstatement = connection.prepareStatement(psql)) {
+            List<T> list = new ArrayList<>();
+
+            int i = 0;
+            for (Object parameter : parameters) {
+                pstatement.setObject(++i, parameter);
+            }
+
+            ResultSet rs = pstatement.executeQuery();
+            while (rs.next()) {
+                T t = rowMapper.rowMapping(rs, rs.getMetaData().getColumnCount());
+                list.add(t);
+            }
+
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
 
 }
