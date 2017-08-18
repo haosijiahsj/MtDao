@@ -15,15 +15,11 @@ public class DeleteMethodProcessor extends BaseMethodProcessor<Delete> {
     public Object process() {
         String userSql = methodAnnotation.value();
 
-        SqlCreator sqlCreator = new DeleteSqlCreator(userSql);
+        SqlCreator sqlCreator = new DeleteSqlCreator();
         sqlCreator.setParameters(parameters);
 
-        MyPreparedStatementCreator myPreparedStatementCreator;
-        if (!"".equals(userSql)) {
-            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator, SqlCreateType.USER_DEFINE);
-        } else {
-            myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
-        }
+        MyPreparedStatementCreator myPreparedStatementCreator
+                = new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
 
         return jdbcTemplate.update(myPreparedStatementCreator);
     }

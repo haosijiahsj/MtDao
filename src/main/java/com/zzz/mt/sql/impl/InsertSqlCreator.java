@@ -2,7 +2,7 @@ package com.zzz.mt.sql.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zzz.mt.mapping.EntityMapper;
+import com.zzz.mt.mapping.MapperHandler;
 import com.zzz.mt.mapping.MapperColumnResult;
 import com.zzz.mt.mapping.MapperResult;
 import com.zzz.mt.sql.SingleParamSqlCreator;
@@ -35,18 +35,21 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
     @Override
     public String createPreparedSql() {
         valueMap = new HashMap<>();
-        MapperResult mapperResult = new EntityMapper(parameter, SqlType.INSERT).getMapperResult();
+        MapperResult mapperResult = new MapperHandler(parameter, SqlType.INSERT).getMapperResult();
 
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
 
         List<MapperColumnResult> columnResults = mapperResult.getMapperColumnResults();
 
         List<String> questionMarks = Lists.newArrayList();
-        List<String> columnNames = Lists.transform(columnResults, input -> {
+        List<String> columnNames = Lists.newArrayList();
+
+        int i = 0;
+        for (MapperColumnResult rs : columnResults) {
+            columnNames.add("`" + rs.getColumnName() + "`");
             questionMarks.add("?");
-            valueMap.put(input.getIndex(), input.getValue());
-            return "`" + input.getColumnName() + "`";
-        });
+            valueMap.put(++i, rs.getValue());
+        }
 
         sqlBuilder.append("`").append(mapperResult.getTableName()).append("`")
                 .append("(").append(Joiner.on(", ").join(columnNames)).append(")")
