@@ -62,44 +62,6 @@ public interface JdbcOperations {
 
     /**
      * 自动映射结构到clazz中
-     * @param clazz
-     * @param sql
-     * @param <T>
-     * @return
-     */
-    <T> T queryForObject(Class<T> clazz, String sql);
-
-    /**
-     * 自动映射结构到clazz中
-     * @param clazz
-     * @param psql
-     * @param parameters
-     * @param <T>
-     * @return
-     */
-    <T> T queryForObject(Class<T> clazz, String psql, Object... parameters);
-
-    /**
-     * 自动映射结构到clazz中
-     * @param clazz
-     * @param sql
-     * @param <T>
-     * @return
-     */
-    <T> List<T> queryForList(Class<T> clazz, String sql);
-
-    /**
-     * 自动映射结构到clazz中
-     * @param clazz
-     * @param psql
-     * @param parameters
-     * @param <T>
-     * @return
-     */
-    <T> List<T> queryForList(Class<T> clazz, String psql, Object... parameters);
-
-    /**
-     * 自动映射结构到clazz中
      * @param sql
      * @param rowMapper
      * @param <T>

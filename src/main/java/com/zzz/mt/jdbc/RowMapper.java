@@ -8,6 +8,6 @@ import java.sql.SQLException;
  */
 public interface RowMapper<T> {
 
-    T rowMapping(ResultSet rs, int index) throws SQLException;
+    T rowMapping(ResultSet rs, int rowCount) throws SQLException;
 
 }

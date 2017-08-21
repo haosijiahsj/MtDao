@@ -124,44 +124,6 @@ public class JdbcOperationsImpl implements JdbcOperations {
     }
 
     @Override
-    public <T> T queryForObject(Class<T> clazz, String sql) {
-        return null;
-    }
-
-    @Override
-    public <T> T queryForObject(Class<T> clazz, String psql, Object... parameters) {
-        return queryForList(clazz, psql, parameters).get(0);
-    }
-
-    @Override
-    public <T> List<T> queryForList(Class<T> clazz, String sql) {
-
-        return null;
-    }
-
-    @Override
-    public <T> List<T> queryForList(Class<T> clazz, String psql, Object... parameters) {
-        Connection connection = DataSourceUtils.getConnection(dataSource);
-        try (PreparedStatement pstatement = connection.prepareStatement(psql)) {
-
-            List<T> objects = new ArrayList<>();
-            int i = 0;
-            for (Object parameter : parameters) {
-                pstatement.setObject(++i, parameter);
-            }
-
-            ResultSet rs = pstatement.executeQuery();
-            while (rs.next()) {
-                T value = (T) rs.getObject(1);
-                objects.add(value);
-            }
-            return objects;
-        } catch (SQLException e) {
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
     public <T> T queryForObject(String sql, RowMapper<T> rowMapper) {
         return queryForList(sql, rowMapper).get(0);
     }
