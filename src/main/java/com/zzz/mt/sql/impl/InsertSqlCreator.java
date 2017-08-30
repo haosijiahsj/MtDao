@@ -7,7 +7,9 @@ import com.zzz.mt.mapping.MapperColumnResult;
 import com.zzz.mt.mapping.MapperResult;
 import com.zzz.mt.sql.SingleParamSqlCreator;
 import com.zzz.mt.support.SqlType;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.*;
 
@@ -16,7 +18,7 @@ import java.util.*;
  */
 public class InsertSqlCreator extends SingleParamSqlCreator {
 
-    private Logger logger = Logger.getLogger(InsertSqlCreator.class);
+    private Logger logger = LoggerFactory.getLogger(InsertSqlCreator.class);
     private String sql;
 
     public InsertSqlCreator() {}
@@ -28,7 +30,7 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
         for (Object value : parameters) {
             valueMap.put(++i, value);
         }
-        logger.info("sql statement: " + this.sql);
+        logger.info("sql statement: {}", this.sql);
         return this.sql;
     }
 
@@ -57,7 +59,7 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
                 .append("(").append(Joiner.on(", ").join(questionMarks)).append(")");
 
         String sql = sqlBuilder.toString();
-        logger.info("sql statement:" + sql);
+        logger.info("sql statement:{}",sql);
 
         return sql;
     }

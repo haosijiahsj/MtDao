@@ -6,9 +6,9 @@ import com.zzz.mt.mapping.MapperColumnResult;
 import com.zzz.mt.mapping.MapperHandler;
 import com.zzz.mt.mapping.MapperResult;
 import com.zzz.mt.sql.SingleParamSqlCreator;
-import com.zzz.mt.sql.SqlCreator;
 import com.zzz.mt.support.SqlType;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class UpdateSqlCreator extends SingleParamSqlCreator {
 
-    private Logger logger = Logger.getLogger(UpdateSqlCreator.class);
+    private Logger logger = LoggerFactory.getLogger(UpdateSqlCreator.class);
     private String sql;
 
     public UpdateSqlCreator() {}
@@ -30,7 +30,7 @@ public class UpdateSqlCreator extends SingleParamSqlCreator {
         for (Object value : parameters) {
             valueMap.put(++i, value);
         }
-        logger.info("sql statement: " + this.sql);
+        logger.info("sql statement: ", this.sql);
         return sql;
     }
 
@@ -61,14 +61,12 @@ public class UpdateSqlCreator extends SingleParamSqlCreator {
                 .append("`").append(idColumn).append("` = ?");
 
         String sql = sqlBuilder.toString();
-        logger.info("sql statement: " + sql);
+        logger.info("sql statement: ", sql);
         return sql;
     }
 
     @Override
     public String createPreparedSqlFromMap() {
-        StringBuilder sqlBuilder = new StringBuilder("UPDATE ");
-
-        return sql;
+        return null;
     }
 }

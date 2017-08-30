@@ -1,7 +1,5 @@
 package com.zzz.mt.sql;
 
-import org.apache.log4j.Logger;
-
 import java.lang.annotation.Annotation;
 import java.util.*;
 
@@ -9,8 +7,6 @@ import java.util.*;
  * Created by 胡胜钧 on 8/5 0005.
  */
 public abstract class SqlCreator {
-
-    private Logger logger = Logger.getLogger(SqlCreator.class);
 
     // 存储预处理语句索引和值
     protected Map<Integer, Object> valueMap;
