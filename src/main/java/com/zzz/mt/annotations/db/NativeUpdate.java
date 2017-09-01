@@ -10,5 +10,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NativeUpdate {
     String value();
-    boolean returnId() default false;
+    boolean returnKey() default false;
 }
