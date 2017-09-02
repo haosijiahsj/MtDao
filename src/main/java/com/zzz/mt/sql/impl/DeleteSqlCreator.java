@@ -19,20 +19,7 @@ public class DeleteSqlCreator extends SingleParamSqlCreator {
 
     private Logger logger = LoggerFactory.getLogger(DeleteSqlCreator.class);
 
-    private String sql;
-
     public DeleteSqlCreator() {}
-
-    @Override
-    public String createUserSql() {
-        valueMap = new HashMap<>();
-        int i = 0;
-        for (Object value : parameters) {
-            valueMap.put(++i, value);
-        }
-        logger.info("sql statement: ", this.sql);
-        return sql;
-    }
 
     @Override
     public String createPreparedSql() {

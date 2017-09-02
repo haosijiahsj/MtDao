@@ -16,12 +16,6 @@ public abstract class SqlCreator {
     protected Annotation[][] parameterAnnotations;
 
     /**
-     * 直接返回用户传入的sql
-     * @return
-     */
-    public abstract String createUserSql();
-
-    /**
      * 创建预处理sql
      * @return
      */

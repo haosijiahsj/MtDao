@@ -1,6 +1,8 @@
 package com.zzz.mt;
 
 import com.zzz.mt.annotations.MtDao;
+import com.zzz.mt.jdbc.JdbcOperations;
+import com.zzz.mt.jdbc.JdbcOperationsImpl;
 import com.zzz.mt.reflect.Reflection;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -34,7 +36,9 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
             for (Field field : fields) {
                 MtDao mtDaoAnnotation = field.getAnnotation(MtDao.class);
                 if (mtDaoAnnotation == null) continue;
-                Object mtDao = MtDaoProxyFactory.create(field.getType(), jdbcTemplate);
+                // 使用自定义操作sql的语句
+                JdbcOperations jdbcOperations = new JdbcOperationsImpl(dataSource);
+                Object mtDao = MtDaoProxyFactory.create(field.getType(), jdbcOperations);
                 field.setAccessible(true);
                 try {
                     field.set(bean, mtDao);

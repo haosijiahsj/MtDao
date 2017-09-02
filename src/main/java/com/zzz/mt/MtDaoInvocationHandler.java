@@ -5,6 +5,7 @@ import com.zzz.mt.annotations.db.Save;
 import com.zzz.mt.annotations.db.SaveOrUpdate;
 import com.zzz.mt.annotations.db.Update;
 import com.zzz.mt.exceptions.AnnotationNotFoundException;
+import com.zzz.mt.jdbc.JdbcOperations;
 import com.zzz.mt.processors.BaseMethodProcessor;
 import com.zzz.mt.processors.impl.DeleteMethodProcessor;
 import com.zzz.mt.processors.impl.SaveMethodProcessor;
@@ -24,10 +25,10 @@ public class MtDaoInvocationHandler implements InvocationHandler {
 
     private Logger logger = Logger.getLogger(MtDaoInvocationHandler.class);
 
-    private JdbcTemplate jdbcTemplate;
+    private JdbcOperations jdbcOperations;
 
-    public MtDaoInvocationHandler(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public MtDaoInvocationHandler(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class MtDaoInvocationHandler implements InvocationHandler {
             }
 
             // 给父抽象类中设置相关值
-            methodProcessor.setJdbcTemplate(jdbcTemplate);
+            methodProcessor.setJdbcOperations(jdbcOperations);
             methodProcessor.setMethodAnnotation(annotation);
             methodProcessor.setParameters(args);
             methodProcessor.setMethod(method);

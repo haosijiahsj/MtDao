@@ -1,5 +1,6 @@
 package com.zzz.mt.processors;
 
+import com.zzz.mt.jdbc.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.lang.annotation.Annotation;
@@ -14,6 +15,7 @@ public abstract class BaseMethodProcessor<T> {
     protected Annotation[][] parameterAnnotations;
     protected T methodAnnotation;
     protected JdbcTemplate jdbcTemplate;
+    protected JdbcOperations jdbcOperations;
 
     public abstract Object process();
 
@@ -35,6 +37,10 @@ public abstract class BaseMethodProcessor<T> {
 
     public void setMethodAnnotation(T methodAnnotation) {
         this.methodAnnotation = methodAnnotation;
+    }
+
+    public void setJdbcOperations(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.zzz.mt;
 
+import com.zzz.mt.jdbc.JdbcOperations;
 import com.zzz.mt.reflect.Reflection;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -10,8 +11,8 @@ public class MtDaoProxyFactory {
 
     private MtDaoProxyFactory() {}
 
-    public static <T> T create(Class<T> interfaceType, JdbcTemplate jdbcTemplate) {
-        MtDaoInvocationHandler invocationHandler = new MtDaoInvocationHandler(jdbcTemplate);
+    public static <T> T create(Class<T> interfaceType, JdbcOperations jdbcOperations) {
+        MtDaoInvocationHandler invocationHandler = new MtDaoInvocationHandler(jdbcOperations);
 
         return Reflection.newProxy(interfaceType, invocationHandler);
     }
