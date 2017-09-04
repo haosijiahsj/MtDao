@@ -3,11 +3,15 @@ package com.zzz.mt;
 import com.zzz.mt.annotations.MtDao;
 import com.zzz.mt.jdbc.JdbcOperations;
 import com.zzz.mt.jdbc.JdbcOperationsImpl;
+import com.zzz.mt.mapping.MapperEntity;
+import com.zzz.mt.mapping.MapperEntityScanner;
 import com.zzz.mt.reflect.Reflection;
+import com.zzz.mt.utils.EntityCache;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.persistence.Entity;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -30,6 +34,7 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        this.scanEntity(bean);
         Field[] fields = Reflection.getDeclaredFields(bean);
         // 扫描@Mt注解
         if (fields != null) {
@@ -52,6 +57,16 @@ public class AutoInjectMtDaoBean implements BeanPostProcessor, Serializable {
 
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
+    }
+
+    private void scanEntity(Object bean) {
+        MapperEntityScanner scanner = new MapperEntityScanner(bean.getClass());
+        Entity entityAnno = bean.getClass().getAnnotation(Entity.class);
+        if (entityAnno != null) {
+            MapperEntity mapperEntity = scanner.scanEntity();
+            // 放入缓存中
+            EntityCache.put(bean.getClass(), mapperEntity);
+        }
     }
 
 }

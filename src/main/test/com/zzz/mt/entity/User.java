@@ -19,7 +19,7 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sex")
+    @Column(name = "sex")@JoinColumn
     private Boolean sex;
 
     @Column(name = "age")
