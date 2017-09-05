@@ -11,5 +11,5 @@ public abstract class SingleParamSqlCreator extends SqlCreator {
         this.parameter = parameters[0];
         super.setParameters(parameters);
     }
-
+    
 }
