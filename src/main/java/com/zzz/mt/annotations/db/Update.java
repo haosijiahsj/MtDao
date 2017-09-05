@@ -1,7 +1,5 @@
 package com.zzz.mt.annotations.db;
 
-import com.zzz.mt.support.Null;
-
 import java.lang.annotation.*;
 
 /**
@@ -11,7 +9,5 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Update {
-    String value() default "";
-    String tableName() default "";
-    Class<?> entityClass() default Null.class;
+    Class<?> entityClass() default Void.class;
 }

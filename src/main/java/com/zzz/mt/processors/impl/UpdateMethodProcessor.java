@@ -15,11 +15,6 @@ import com.zzz.mt.utils.Preconditions;
 public class UpdateMethodProcessor extends BaseMethodProcessor<Update> {
     @Override
     public Object process() {
-        SqlCreator sqlCreator = new UpdateSqlCreator();
-        sqlCreator.setParameters(parameters);
-
-        MyPreparedStatementCreator myPreparedStatementCreator
-                = new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
-        return jdbcTemplate.update(myPreparedStatementCreator);
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.zzz.mt.mapping;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by 胡胜钧 on 9/3 0003.
  */
@@ -8,6 +10,8 @@ public class MapperColumn {
     private String columnName;
     private boolean insertable = false;
     private boolean updatable = false;
+    private Field field;
+    private Class<?> fieldType;
     private Object value;
 
     public String getFiledName() {
@@ -48,5 +52,21 @@ public class MapperColumn {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public Class<?> getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(Class<?> fieldType) {
+        this.fieldType = fieldType;
     }
 }

@@ -24,7 +24,6 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
 
     @Override
     public String createPreparedSql() {
-        valueMap = new HashMap<>();
         MapperResult mapperResult = new MapperHandler(parameter, SqlType.INSERT).getMapperResult();
 
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
@@ -34,11 +33,9 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
         List<String> questionMarks = Lists.newArrayList();
         List<String> columnNames = Lists.newArrayList();
 
-        int i = 0;
         for (MapperColumnResult rs : columnResults) {
             columnNames.add("`" + rs.getColumnName() + "`");
             questionMarks.add("?");
-            valueMap.put(++i, rs.getValue());
         }
 
         sqlBuilder.append("`").append(mapperResult.getTableName()).append("`")
@@ -47,7 +44,7 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
                 .append("(").append(Joiner.on(", ").join(questionMarks)).append(")");
 
         String sql = sqlBuilder.toString();
-        logger.info("sql statement:{}",sql);
+        logger.info("sql statement:{}", sql);
 
         return sql;
     }

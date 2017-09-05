@@ -16,23 +16,7 @@ public class SaveMethodProcessor extends SingleParamMethodProcessor<Save> {
 
     @Override
     public Object process() {
-        boolean isReturnId = methodAnnotation.returnId();
-
-        SqlCreator sqlCreator = new InsertSqlCreator();
-        sqlCreator.setParameters(parameters);
-
-        MyPreparedStatementCreator myPreparedStatementCreator;
-        SqlCreateType sqlCreateType = SqlCreateType.AUTO_CREATE;
-
-        myPreparedStatementCreator = new MyPreparedStatementCreator(sqlCreator, sqlCreateType);
-        if (isReturnId) {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            myPreparedStatementCreator.setReturnId(true);
-            jdbcTemplate.update(myPreparedStatementCreator, keyHolder);
-            return keyHolder.getKey().intValue();
-        }
-
-        return jdbcTemplate.update(myPreparedStatementCreator);
+        return null;
     }
 
 }

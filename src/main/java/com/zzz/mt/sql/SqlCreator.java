@@ -27,11 +27,9 @@ public abstract class SqlCreator {
      */
     public abstract String createPreparedSqlFromMap();
 
-
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
     }
-
 
     public void setParameterAnnotations(Annotation[][] parameterAnnotations) {
         this.parameterAnnotations = parameterAnnotations;

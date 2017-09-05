@@ -42,7 +42,6 @@ public class MapperEntityScanner {
 
             Transient transientAnno = field.getAnnotation(Transient.class);
             Id idAnno = field.getAnnotation(Id.class);
-            GeneratedValue generatedValueAnno = field.getAnnotation(GeneratedValue.class);
             Column columnAnno = field.getAnnotation(Column.class);
             JoinColumn joinColumnAnno = field.getAnnotation(JoinColumn.class);
 
@@ -51,6 +50,9 @@ public class MapperEntityScanner {
             // 注解注解处理
             if (idAnno != null) {
                 key.setFiledName(field.getName());
+                key.setField(field);
+                key.setFieldType(fieldType);
+                GeneratedValue generatedValueAnno = field.getAnnotation(GeneratedValue.class);
                 if (generatedValueAnno != null) {
                     key.setGenerationType(generatedValueAnno.strategy());
                 } else {
@@ -65,9 +67,11 @@ public class MapperEntityScanner {
                 }
             }
             // 列注解处理
-            if (columnAnno != null) {
+            if (columnAnno != null && idAnno == null && joinColumnAnno == null) {
                 MapperColumn column = new MapperColumn();
                 column.setFiledName(fieldName);
+                column.setField(field);
+                column.setFieldType(fieldType);
                 column.setColumnName(columnAnno.name());
                 column.setInsertable(columnAnno.insertable());
                 column.setUpdatable(columnAnno.updatable());
@@ -77,19 +81,25 @@ public class MapperEntityScanner {
             if (joinColumnAnno != null) {
                 MapperForeignKey foreignKey = new MapperForeignKey();
                 foreignKey.setForeignColumnName(joinColumnAnno.name());
+                foreignKey.setField(field);
+                foreignKey.setFieldType(fieldType);
                 foreignKey.setInsertable(joinColumnAnno.insertable());
                 foreignKey.setUpdatable(joinColumnAnno.updatable());
                 if (field.getAnnotation(OneToOne.class) != null) {
                     foreignKey.setAssociationType(AssociationType.OneToOne);
+                    foreignKey.setFetchType(field.getAnnotation(OneToOne.class).fetch());
                 }
                 if (field.getAnnotation(OneToMany.class) != null) {
                     foreignKey.setAssociationType(AssociationType.OneToMany);
+                    foreignKey.setFetchType(field.getAnnotation(OneToMany.class).fetch());
                 }
                 if (field.getAnnotation(ManyToOne.class) != null) {
                     foreignKey.setAssociationType(AssociationType.ManyToOne);
+                    foreignKey.setFetchType(field.getAnnotation(ManyToOne.class).fetch());
                 }
                 if (field.getAnnotation(ManyToMany.class) != null) {
                     foreignKey.setAssociationType(AssociationType.ManyToMany);
+                    foreignKey.setFetchType(field.getAnnotation(ManyToMany.class).fetch());
                 }
                 foreignKeys.add(foreignKey);
             }
@@ -101,5 +111,7 @@ public class MapperEntityScanner {
         mapperEntity.setForeignKeys(foreignKeys);
         return mapperEntity;
     }
+
+    // private MapperKey scanKey() {}
 
 }

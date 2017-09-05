@@ -13,14 +13,6 @@ import com.zzz.mt.support.SqlCreateType;
 public class DeleteMethodProcessor extends BaseMethodProcessor<Delete> {
     @Override
     public Object process() {
-        String userSql = methodAnnotation.value();
-
-        SqlCreator sqlCreator = new DeleteSqlCreator();
-        sqlCreator.setParameters(parameters);
-
-        MyPreparedStatementCreator myPreparedStatementCreator
-                = new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
-
-        return jdbcTemplate.update(myPreparedStatementCreator);
+        return null;
     }
 }

@@ -54,20 +54,30 @@ public class Reflection {
      * @return
      */
     public static Field[] getDeclaredFields(Object object) {
-        return object.getClass().getDeclaredFields();
+        return getDeclaredFields(object.getClass());
     }
 
     public static Field[] getDeclaredFields(Class<?> clazz) {
         return clazz.getDeclaredFields();
     }
 
+    public static Field getDeclaredField(Object object, String name) {
+        return getDeclaredField(object.getClass(), name);
+    }
+    public static Field getDeclaredField(Class<?> clazz, String name) {
+        try {
+            return clazz.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
     /**
      * 返回该类自己定义的方法
      * @param object
      * @return
      */
     public static Method[] getDeclaredMethods(Object object) {
-        return object.getClass().getDeclaredMethods();
+        return getDeclaredMethods(object.getClass());
     }
 
     public static Method[] getDeclaredMethods(Class<?> clazz) {

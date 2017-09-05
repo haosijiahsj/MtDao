@@ -16,20 +16,7 @@ public class SaveOrUpdateMethodProcessor extends BaseMethodProcessor<SaveOrUpdat
 
     @Override
     public Object process() {
-        EntityScanner entityScanner = new EntityScanner(parameters[0]);
-        Object idValue = null;
-        SqlCreator sqlCreator;
-        if (idValue == null) {
-            sqlCreator = new InsertSqlCreator();
-            sqlCreator.setParameters(parameters);
-        } else {
-            sqlCreator = new UpdateSqlCreator();
-            sqlCreator.setParameters(parameters);
-        }
-
-        MyPreparedStatementCreator myPreparedStatementCreator =
-                new MyPreparedStatementCreator(sqlCreator, SqlCreateType.AUTO_CREATE);
-        return jdbcTemplate.update(myPreparedStatementCreator);
+        return null;
     }
 
 }
