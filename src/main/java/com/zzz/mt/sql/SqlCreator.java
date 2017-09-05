@@ -8,24 +8,13 @@ import java.util.*;
  */
 public abstract class SqlCreator {
 
-    // 存储预处理语句索引和值
-    protected Map<Integer, Object> valueMap;
-
     protected Object[] parameters;
 
     protected Annotation[][] parameterAnnotations;
 
-    /**
-     * 创建预处理sql
-     * @return
-     */
-    public abstract String createPreparedSql();
+    protected String psql;
 
-    /**
-     * 从用户定义的map中来创建预处理sql
-     * @return
-     */
-    public abstract String createPreparedSqlFromMap();
+    protected Object[] values;
 
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
@@ -35,8 +24,12 @@ public abstract class SqlCreator {
         this.parameterAnnotations = parameterAnnotations;
     }
 
-    public Map<Integer, Object> getValueMap() {
-        return valueMap;
+    public String getPsql() {
+        return this.psql;
+    }
+
+    public Object[] getValues() {
+        return this.values;
     }
 
 }

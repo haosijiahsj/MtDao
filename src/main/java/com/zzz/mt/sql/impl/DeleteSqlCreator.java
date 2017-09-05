@@ -21,31 +21,27 @@ public class DeleteSqlCreator extends SingleParamSqlCreator {
 
     public DeleteSqlCreator() {}
 
-    @Override
-    public String createPreparedSql() {
-        valueMap = Maps.newHashMap();
-        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
-        MapperResult mapperResult = new MapperHandler(parameter, SqlType.UPDATE).getMapperResult();
-        List<MapperColumnResult> columnResults = mapperResult.getMapperColumnResults();
+//    @Override
+//    public String createPreparedSql() {
+//        valueMap = Maps.newHashMap();
+//        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
+//        MapperResult mapperResult = new MapperHandler(parameter, SqlType.UPDATE).getMapperResult();
+//        List<MapperColumnResult> columnResults = mapperResult.getMapperColumnResults();
+//
+//        String idColumn = "";
+//        Object idValue = null;
+//        for (MapperColumnResult rs : columnResults) {
+//            if (!rs.isId()) continue;
+//            idColumn = rs.getColumnName();
+//            idValue = rs.getValue();
+//        }
+//        valueMap.put(1, idValue);
+//        sqlBuilder.append("`").append(mapperResult.getTableName()).append("`")
+//                .append(" WHERE ").append("`").append(idColumn).append("` = ?");
+//
+//        String sql = sqlBuilder.toString();
+//        logger.info("sql statement: ", sql);
+//        return sql;
+//    }
 
-        String idColumn = "";
-        Object idValue = null;
-        for (MapperColumnResult rs : columnResults) {
-            if (!rs.isId()) continue;
-            idColumn = rs.getColumnName();
-            idValue = rs.getValue();
-        }
-        valueMap.put(1, idValue);
-        sqlBuilder.append("`").append(mapperResult.getTableName()).append("`")
-                .append(" WHERE ").append("`").append(idColumn).append("` = ?");
-
-        String sql = sqlBuilder.toString();
-        logger.info("sql statement: ", sql);
-        return sql;
-    }
-
-    @Override
-    public String createPreparedSqlFromMap() {
-        return null;
-    }
 }

@@ -1,7 +1,6 @@
 package com.zzz.mt.mapping;
 
 import com.zzz.mt.reflect.Reflection;
-import com.zzz.mt.support.SqlType;
 
 import java.util.List;
 
@@ -11,7 +10,11 @@ import java.util.List;
 public class MapperEntityHandler {
     private MapperEntity mapperEntity;
     private Object object;
-    private SqlType sqlType;
+
+    public MapperEntityHandler(MapperEntity mapperEntity, Object object) {
+        this.mapperEntity = mapperEntity;
+        this.object = object;
+    }
 
     public void setValue() {
         MapperKey key = mapperEntity.getKey();
@@ -23,28 +26,18 @@ public class MapperEntityHandler {
 
         // 获取各列的值
         for (MapperColumn column : columns) {
-            boolean flag = true;
-            if (sqlType.equals(SqlType.INSERT)) {
-                flag = column.isInsertable();
-            } else if (SqlType.UPDATE.equals(sqlType) || SqlType.DELETE.equals(sqlType)) {
-                flag = column.isUpdatable();
-            }
-
-            if (!flag) continue;
-
             column.setValue(Reflection.get(object, column.getField()));
         }
 
-        // 获取外键相关的值，暂时先忽略
+        // 获取外键相关的值
         for (MapperForeignKey foreignKey : foreignKeys) {
-            boolean flag = false;
-            if (sqlType.equals(SqlType.INSERT)) {
-                flag = foreignKey.isInsertable();
-            } else if (SqlType.UPDATE.equals(sqlType) || SqlType.DELETE.equals(sqlType)) {
-                flag = foreignKey.isUpdatable();
-            }
+            foreignKey.setValue(Reflection.get(object, key.getField()));
         }
 
+    }
+
+    public MapperEntity getMapperEntity() {
+        return this.mapperEntity;
     }
 
 }

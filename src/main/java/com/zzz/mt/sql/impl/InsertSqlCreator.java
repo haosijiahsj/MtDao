@@ -2,11 +2,10 @@ package com.zzz.mt.sql.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zzz.mt.mapping.MapperHandler;
-import com.zzz.mt.mapping.MapperColumnResult;
-import com.zzz.mt.mapping.MapperResult;
+import com.zzz.mt.mapping.*;
 import com.zzz.mt.sql.SingleParamSqlCreator;
 import com.zzz.mt.support.SqlType;
+import com.zzz.mt.utils.EntityCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,38 +19,53 @@ public class InsertSqlCreator extends SingleParamSqlCreator {
 
     private Logger logger = LoggerFactory.getLogger(InsertSqlCreator.class);
 
-    public InsertSqlCreator() {}
+    private MapperEntity entity;
 
-    @Override
-    public String createPreparedSql() {
-        MapperResult mapperResult = new MapperHandler(parameter, SqlType.INSERT).getMapperResult();
+    public InsertSqlCreator(Object parameter) {
+        super.parameter = parameter;
+        MapperEntityHandler handler = new MapperEntityHandler(EntityCache.get(parameter.getClass()), parameter);
+        this.entity = handler.getMapperEntity();
+        this.generatePsqlAndValues();
+    }
+
+    private void generatePsqlAndValues() {
+        MapperKey key = this.entity.getKey();
+        List<MapperColumn> columns = this.entity.getColumns();
+        List<MapperForeignKey> foreignKeys = this.entity.getForeignKeys();
 
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
 
-        List<MapperColumnResult> columnResults = mapperResult.getMapperColumnResults();
-
-        List<String> questionMarks = Lists.newArrayList();
         List<String> columnNames = Lists.newArrayList();
+        List<String> questionMarks = Lists.newArrayList();
+        List<Object> values = Lists.newArrayList();
 
-        for (MapperColumnResult rs : columnResults) {
-            columnNames.add("`" + rs.getColumnName() + "`");
+        if (key != null && key.getValue() != null) {
+            columnNames.add("`" + key.getColumnName() + "`");
             questionMarks.add("?");
+            values.add(key.getValue());
         }
 
-        sqlBuilder.append("`").append(mapperResult.getTableName()).append("`")
+        for (MapperColumn column : columns) {
+            columnNames.add("`" + column.getColumnName() + "`");
+            questionMarks.add("?");
+            values.add(column.getValue());
+        }
+
+        sqlBuilder.append("`").append(this.entity.getTableName()).append("`")
                 .append("(").append(Joiner.on(", ").join(columnNames)).append(")")
                 .append(" VALUES ")
                 .append("(").append(Joiner.on(", ").join(questionMarks)).append(")");
+        super.psql = sqlBuilder.toString();
+        super.values = values.toArray();
 
-        String sql = sqlBuilder.toString();
-        logger.info("sql statement:{}", sql);
+        // 外键暂时不处理
+        for (MapperForeignKey foreignKey : foreignKeys) {
+            if (!foreignKey.isInsertable()) continue;
 
-        return sql;
+        }
+
+        logger.info("sql statement: {}", this.psql);
+        logger.info("sql parameter: {}", this.values);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public String createPreparedSqlFromMap() {
-        return null;
-    }
 }
