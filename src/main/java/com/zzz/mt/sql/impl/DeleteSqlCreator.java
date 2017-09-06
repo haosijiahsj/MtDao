@@ -21,6 +21,11 @@ public class DeleteSqlCreator extends SingleParamSqlCreator {
 
     public DeleteSqlCreator() {}
 
+    @Override
+    public String generatePsql() {
+        return null;
+    }
+
 //    @Override
 //    public String createPreparedSql() {
 //        valueMap = Maps.newHashMap();

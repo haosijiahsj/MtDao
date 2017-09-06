@@ -8,13 +8,22 @@ import java.util.*;
  */
 public abstract class SqlCreator {
 
+    /**
+     * 方法中的参数
+     */
     protected Object[] parameters;
 
+    /**
+     * 方法中参数的注解
+     */
     protected Annotation[][] parameterAnnotations;
 
-    protected String psql;
-
+    /**
+     * 这是sql中的参数
+     */
     protected Object[] values;
+
+    public abstract String generatePsql();
 
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
@@ -22,10 +31,6 @@ public abstract class SqlCreator {
 
     public void setParameterAnnotations(Annotation[][] parameterAnnotations) {
         this.parameterAnnotations = parameterAnnotations;
-    }
-
-    public String getPsql() {
-        return this.psql;
     }
 
     public Object[] getValues() {

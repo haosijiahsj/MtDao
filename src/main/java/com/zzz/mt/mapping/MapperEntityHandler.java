@@ -16,7 +16,7 @@ public class MapperEntityHandler {
         this.object = object;
     }
 
-    public void setValue() {
+    public void setValueFromObject() {
         MapperKey key = mapperEntity.getKey();
         List<MapperColumn> columns = mapperEntity.getColumns();
         List<MapperForeignKey> foreignKeys = mapperEntity.getForeignKeys();

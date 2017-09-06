@@ -22,4 +22,8 @@ public class UpdateSqlCreator extends SingleParamSqlCreator {
 
     public UpdateSqlCreator() {}
 
+    @Override
+    public String generatePsql() {
+        return null;
+    }
 }
